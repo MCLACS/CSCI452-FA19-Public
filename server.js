@@ -45,7 +45,7 @@ function getSnippets(req, res)
                         con.query("SELECT * FROM SNIPPETS", function(err, snippets, fields)
                         {
 
-                                result = {'result' : [{'snip_id' : snippets[0].SNIP_ID, 'lang' : snippets[0].SNIP_$
+                                result = {'result' : [{'snip_id' : snippets[0].SNIP_ID, 'lang' : snippets[0].SNIP_LANG, 'creator' : snippets[0].SNIP_CREATOR, 'desc' : snippets[0].SNIP_DESC}]};
                                 writeResult(res, result);
 
                         });
