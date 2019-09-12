@@ -1,10 +1,23 @@
 const express = require('express');
 const app = express();
 
+var http = require('http');
+var fs = require('fs');
+
+require('dotenv').config()
 
 var mysql = require('mysql');
 
 app.listen(process.env.PORT,  process.env.IP, startHandler())
+
+
+// const db = require('db');
+/* db.connect({
+	host: process.env.DB_HOST,
+	username: process.env.DB_USER,
+	password: process.env.DB_PASS,
+	database : process.env.DB_NAME
+}); */
 
 const conInfo =
 {
@@ -14,7 +27,7 @@ const conInfo =
 	database : process.env.DB_NAME
 };
 
-
+app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
 
 function startHandler()
@@ -44,13 +57,22 @@ function getSnippets(req, res)
                 {
                         con.query("SELECT * FROM SNIPPETS", function(err, snippets, fields)
                         {
-
-                                result = {'result' : [{'snip_id' : snippets[0].SNIP_ID, 'lang' : snippets[0].SNIP_LANG, 'creator' : snippets[0].SNIP_CREATOR, 'desc' : snippets[0].SNIP_DESC}]};
-                                writeResult(res, result);
+				if(err)
+					writeResult(res, {'error' : err});
+				else
+				{
+                                	result = {'result' : [{'snip_id' : snippets[0].SNIP_ID, 'lang' : snippets[0].SNIP_LANG, 'creator' : snippets[0].SNIP_CREATOR, 'desc' : snippets[0].SNIP_DESC}]};
+                                	writeResult(res, result);
+				}
 
                         });
                 }
-        }
+        });
+}
 
-
+function serveIndex(req, res)
+{
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  var index = fs.readFileSync('index.html');
+  res.end(index);
 }

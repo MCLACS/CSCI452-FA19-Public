@@ -1,2 +1,9 @@
 # ignore node_modules directory
 /node_modules/*
+
+# ignore .env file
+*.env
+
+#ignore garbage
+*.log
+*.swp
