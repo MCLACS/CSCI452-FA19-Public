@@ -62,15 +62,15 @@
                         let row = $("<tr></tr>");
 
                         let item = $("<td></td>");
-                        item.text(model.result[i].lang);
+                        item.text(model.result[i].SNIP_LANG);
                         row.append(item);
 
                         item = $("<td></td>");
-                        item.text(model.result[i].creator);
+                        item.text(model.result[i].SNIP_CREATOR);
                         row.append(item);
 
                         item = $("<td></td>");
-                        item.text(model.result[i].desc);
+                        item.text(model.result[i].SNIP_DESC);
                         row.append(item);
                         
                         $("#table_body").append(row);
@@ -94,6 +94,7 @@
                     {
                         model.result = json.result;
                     }
+		    console.log(model.result);
                     updateView();
                 })
                 jqxhr.fail(function(json) 

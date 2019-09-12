@@ -65,15 +65,14 @@ function getSnippets(req, res)
                 else
                 {
 			console.log("connected")
-                        con.query("SELECT * FROM SNIPPET", function(err, snippets, fields)
+                        con.query("SELECT * FROM SNIPPET", function(err, result, fields)
                         {
 				if(err)
 					writeResult(res, {'error' : err});
 				else
 				{
-                                	result = {'result' : [{'snip_id' : snippets[0].SNIP_ID, 'lang' : snippets[0].SNIP_LANG, 'creator' : snippets[0].SNIP_CREATOR, 'desc' : snippets[0].SNIP_DESC}]};
-                                	writeResult(res, result);
-					console.log("yeet");
+                                	writeResult(res, {'result' : result});
+					console.log(result);
 				}
 
                         });
