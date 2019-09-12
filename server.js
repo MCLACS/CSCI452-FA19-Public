@@ -19,12 +19,21 @@ app.listen(process.env.PORT,  process.env.IP, startHandler())
 	database : process.env.DB_NAME
 }); */
 
+/*0
 const conInfo =
 {
 	host : process.env.DB_HOST,
   	user : process.env.DB_USER,
 	password : process.env.DB_PASS,
 	database : process.env.DB_NAME
+}; */
+
+const conInfo =
+{
+        host : "localhost",
+        user : "root",
+        password : "password",
+        database : "SNIPPETDB"
 };
 
 app.all('/', serveIndex);
@@ -51,11 +60,12 @@ function getSnippets(req, res)
         var con = mysql.createConnection(conInfo);
         con.connect(function(err)
         {
-                if(err)
+                if(err) 
                         writeResult(res, {'error' : err});
                 else
                 {
-                        con.query("SELECT * FROM SNIPPETS", function(err, snippets, fields)
+			console.log("connected")
+                        con.query("SELECT * FROM SNIPPET", function(err, snippets, fields)
                         {
 				if(err)
 					writeResult(res, {'error' : err});
@@ -63,6 +73,7 @@ function getSnippets(req, res)
 				{
                                 	result = {'result' : [{'snip_id' : snippets[0].SNIP_ID, 'lang' : snippets[0].SNIP_LANG, 'creator' : snippets[0].SNIP_CREATOR, 'desc' : snippets[0].SNIP_DESC}]};
                                 	writeResult(res, result);
+					console.log("yeet");
 				}
 
                         });
