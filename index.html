@@ -1,0 +1,116 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
+        
+        <style>
+            /* put your css styles here...*/
+            
+        </style>
+    </head>
+    
+    <body>
+        <div class="container">
+            <!--put your html code here...-->
+            <h4>Gitter(tm)(c).gov.org.io</h4>
+            <button id='btnSubmit' type="button" class="btn btn-primary float-right">Fetch Code Snippets</button>           
+            <br>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Language</th>
+                    <th scope="col">Creator</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody id='table_body'>
+                </tbody>
+            </table>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
+        
+        <!--put your modal dialogs here...-->
+        
+        <script>
+        /* global $ */
+        // put your JavaScript code here...
+        $(document).ready(function() 
+        {
+            // model...
+            let model = {};
+            function initializeModel()
+            {
+                model.error = "";
+                model.result = {};
+            }
+            
+            // view...
+            function updateView()
+            {
+                if (model.error != "")
+                {
+                    $("#response").text(model.error);
+                }
+                else
+                {
+                    // populate list with snippets
+                    $('#table_body').empty();
+                    for (let i in model.result)
+                    {
+                        let row = $("<tr></tr>");
+
+                        let item = $("<td></td>");
+                        item.text(model.result[i].language);
+                        row.append(item);
+
+                        item = $("<td></td>");
+                        item.text(model.result[i].creator);
+                        row.append(item);
+
+                        item = $("<td></td>");
+                        item.text(model.result[i].desc);
+                        row.append(item);
+                        
+                        $("#table_body").append(row);
+                    }
+                }
+                
+            }
+            
+            // controller...
+            $('#btnSubmit').click(function() 
+            {
+                let url = 'getSnippets'; //get url later
+                var jqxhr = $.get(url);
+                jqxhr.done(function(json) 
+                {
+                    if (json.error !== undefined)
+                    {
+                        model.error = json.error;
+                    }
+                    else
+                    {
+                        model.result = json.result;
+                    }
+                    updateView();
+                })
+                jqxhr.fail(function(json) 
+                {
+                    let error = JSON.stringify(json);
+                    model.error = error;
+                    updateView();
+                })
+            });
+            
+            // run...
+            initializeModel();
+            updateView();
+        });        
+            
+        </script>
+    </body>
+
+</html>
+
