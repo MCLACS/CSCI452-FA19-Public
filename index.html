@@ -62,7 +62,7 @@
                 model.error = "";
                 model.result = {};
                 model.filter = "";
-                model.category = "LANG";
+                model.category = "SNIP_LANG";
                 model.order = "ASC";
                 
                 //Button Displays
@@ -113,7 +113,7 @@
                     }
 
                     //Query Database
-                    let url = 'getSnippets?filter=' + model.filter +'&category=' + model.category + '&order=' + model.order;
+                    let url = 'getSnippets?filter=' + model.filter + '&category=' + model.category + '&order=' + model.order;
                     console.log(url);
                     var jqxhr = $.get(url);
                     jqxhr.done(function(json) 
@@ -161,14 +161,15 @@
             // controller...
             $('#btnSubmit').click(function() 
             {
-                model.filter = $('#filterTxt').text();
-                updateview();
+                //model.filter = $('#filterTxt').text();
+                model.filter = $('#filterTxt').val().trim();
+                updateView();
             });
 
             //Order Details
             $('#btnLangAsc').click(function() 
             {
-                model.category = "LANG";
+                model.category = "SNIP_LANG";
                 model.order = "ASC";
                 model.langOrder = "ASC";
                 model.creatorOrder = "DESC";
@@ -178,7 +179,7 @@
 
             $('#btnCreatorAsc').click(function() 
             {
-                model.category = "CREATOR";
+                model.category = "SNIP_CREATOR";
                 model.order = "ASC";
                 model.creatorOrder = "ASC";
                 model.langOrder = "DESC";
@@ -188,7 +189,7 @@
 
             $('#btnDescAsc').click(function() 
             {
-                model.category = "DESC";
+                model.category = "SNIP_DESC";
                 model.order = "ASC";
                 model.descOrder = "ASC";
                 model.langOrder = "DESC";
@@ -198,7 +199,7 @@
 
             $('#btnLangDesc').click(function() 
             {
-                model.category = "LANG";
+                model.category = "SNIP_LANG";
                 model.order = "DESC";
                 model.langOrder = "DESC";
                 updateView();
@@ -206,7 +207,7 @@
 
             $('#btnCreatorDesc').click(function() 
             {
-                model.category = "CREATOR";
+                model.category = "SNIP_CREATOR";
                 model.order = "DESC";
                 model.creatorOrder = "DESC";
                 updateView();
@@ -214,7 +215,7 @@
 
             $('#btnDescDesc').click(function() 
             {
-                model.category = "DESC";
+                model.category = "SNIP_DESC";
                 model.order = "DESC";
                 model.descOrder = "DESC";
                 updateView();
