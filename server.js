@@ -48,7 +48,8 @@ function getSnippets(req, res)
 			//con.query("SELECT * FROM SNIPPET FROM SNIPPET WHERE SNIP_LANG OR SNIP_CREATOR OR SNIP_DESC", function(err, result, fields)
 			//con.query("SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE '%?%' OR SNIP_CREATOR LIKE '%?%' OR SNIP_DESC LIKE '%?%' ORDER BY ? ?", [req.query.filter, req.query.filter, req.query.filter,  req.query.category, req.query.order]);
 			console.log([req.query.category, req.query.order]);
-			con.query("SELECT * FROM SNIPPET " + " ORDER BY " + req.query.category + " " + req.query.order,function(err, result, fields)
+			con.query("SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE '%" + req.query.filter + "%' OR SNIP_CREATOR LIKE '%" + req.query.filter + 
+				"%' OR SNIP_DESC LIKE '%" + req.query.filter + "%' ORDER BY " + req.query.category + " " + req.query.order,function(err, result, fields)
                         {
 				            if(err)
 					            writeResult(res, {'error' : err});
