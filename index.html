@@ -188,8 +188,8 @@
 
             $('#btnSubmit').click(function() 
             {
-                //model.filter = $('#filterTxt').text();
-                model.filter = $('#filterTxt').val().trim();
+                let str = $('#filterTxt').val().trim();
+	  	model.filter = encodeURIComponent(str);
                 sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
 
