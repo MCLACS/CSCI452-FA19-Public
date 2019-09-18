@@ -63,12 +63,14 @@
                 model.result = {};
                 model.filter = "";
                 model.category = "SNIP_LANG";
-                model.order = "ASC";
+                model.order = "DESC";
                 
                 //Button Displays
                 model.langOrder = "DESC";
                 model.creatorOrder = "DESC";
                 model.descOrder = "DESC";
+
+		sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             }
             
             // view...
@@ -113,7 +115,7 @@
                     }
 
                     //Query Database
-                    let url = 'getSnippets?filter=' + model.filter + '&category=' + model.category + '&order=' + model.order;
+                   /* let url = 'getSnippets?filter=' + model.filter + '&category=' + model.category + '&order=' + model.order;
                     console.log(url);
                     var jqxhr = $.get(url);
                     jqxhr.done(function(json) 
@@ -125,13 +127,14 @@
                         else
                         {
                             model.result = json.result;
+			    updateView();
                         }
                     })
                     jqxhr.fail(function(json) 
                     {
                         let error = JSON.stringify(json);
                         model.error = error;
-                    })
+                    })*/
                     
 
                     // populate list with snippets
@@ -159,11 +162,35 @@
             }
             
             // controller...
+	    function sendRequest(url, callback)
+	    {
+		console.log(url);
+                var jqxhr = $.get(url);
+                jqxhr.done(function(json) 
+  		{
+                    model.result  = json.result;
+                    updateView();
+		    
+		    if(callback !== undefined)
+			callback();
+              
+                })
+                jqxhr.fail(function(json) 
+                {
+                     let error = JSON.stringify(json);
+                     model.error = error;
+                     updateView();
+                })
+
+	    }
+
+
+
             $('#btnSubmit').click(function() 
             {
                 //model.filter = $('#filterTxt').text();
                 model.filter = $('#filterTxt').val().trim();
-                updateView();
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
 
             //Order Details
@@ -174,7 +201,7 @@
                 model.langOrder = "ASC";
                 model.creatorOrder = "DESC";
                 model.descOrder = "DESC";
-                updateView();
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
 
             $('#btnCreatorAsc').click(function() 
@@ -184,7 +211,7 @@
                 model.creatorOrder = "ASC";
                 model.langOrder = "DESC";
                 model.descOrder = "DESC";
-                updateView();
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
 
             $('#btnDescAsc').click(function() 
@@ -194,7 +221,8 @@
                 model.descOrder = "ASC";
                 model.langOrder = "DESC";
                 model.creatorOrder = "DESC";
-                updateView();
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+
             });
 
             $('#btnLangDesc').click(function() 
@@ -202,7 +230,7 @@
                 model.category = "SNIP_LANG";
                 model.order = "DESC";
                 model.langOrder = "DESC";
-                updateView();
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
 
             $('#btnCreatorDesc').click(function() 
@@ -210,7 +238,7 @@
                 model.category = "SNIP_CREATOR";
                 model.order = "DESC";
                 model.creatorOrder = "DESC";
-                updateView();
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
 
             $('#btnDescDesc').click(function() 
@@ -218,12 +246,11 @@
                 model.category = "SNIP_DESC";
                 model.order = "DESC";
                 model.descOrder = "DESC";
-                updateView();
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
             
             // run...
             initializeModel();
-            updateView();
         });        
             
         </script>
