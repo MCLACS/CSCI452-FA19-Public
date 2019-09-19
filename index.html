@@ -1,25 +1,42 @@
 <html>
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
-        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <meta charset="utf-8">
         <style>
             /* put your css styles here...*/
-            
+
+            #btnSubmit { height: 38px;}
         </style>
     </head>
-    
+    <!-- https://www.w3schools.com/icons/icons_reference.asp -->
     <body>
         <div class="container">
             <!--put your html code here...-->
             <h4>Gitter(tm)(c).gov.org.io</h4>
-            <button id='btnSubmit' type="button" class="btn btn-primary float-right">Fetch Code Snippets</button>           
+            
+            <form class="form-inline search-bar float-right">
+                <input class="form-control" type="text" placeholder="Filter" aria-label="" id='filterTxt'>
+                <button id='btnSubmit' type="button" class="btn btn-default float-left"><span class="fa fa-search" aria-hidden="true"></span></button>
+            </form>
+
             <br>
+
             <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col">Language</th>
-                    <th scope="col">Creator</th>
-                    <th scope="col">Description</th>
+                    <th scope="col">Language 
+                        <button id='btnLangAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
+                        <button id='btnLangDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
+                    </th>
+                    <th scope="col">Creator 
+                        <button id='btnCreatorAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
+                        <button id='btnCreatorDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
+                    </th>
+                    <th scope="col">Description 
+                        <button id='btnDescAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
+                        <button id='btnDescDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
+                    </th>
                   </tr>
                 </thead>
                 <tbody id='table_body'>
@@ -44,6 +61,16 @@
             {
                 model.error = "";
                 model.result = {};
+                model.filter = "";
+                model.category = "SNIP_LANG";
+                model.order = "DESC";
+                
+                //Button Displays
+                model.langOrder = "DESC";
+                model.creatorOrder = "DESC";
+                model.descOrder = "DESC";
+
+		sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             }
             
             // view...
@@ -55,6 +82,38 @@
                 }
                 else
                 {
+                    // Display proper sorting buttons
+                    if(model.langOrder == "DESC")
+                    {
+                        $('#btnLangAsc').show();
+                        $('#btnLangDesc').hide();
+                    }
+                    else
+                    {
+                        $('#btnLangAsc').hide();
+                        $('#btnLangDesc').show();
+                    }
+                    if(model.creatorOrder == "DESC")
+                    {
+                        $('#btnCreatorAsc').show();
+                        $('#btnCreatorDesc').hide();
+                    }
+                    else
+                    {
+                        $('#btnCreatorAsc').hide();
+                        $('#btnCreatorDesc').show();
+                    }
+                    if(model.descOrder == "DESC")
+                    {
+                        $('#btnDescAsc').show();
+                        $('#btnDescDesc').hide();
+                    }
+                    else
+                    {
+                        $('#btnDescAsc').hide();
+                        $('#btnDescDesc').show();
+                    }
+
                     // populate list with snippets
                     $('#table_body').empty();
                     for (let i in model.result)
@@ -80,33 +139,95 @@
             }
             
             // controller...
-            $('#btnSubmit').click(function() 
-            {
-                let url = 'getSnippets'; //get url later
+	    function sendRequest(url, callback)
+	    {
+		console.log(url);
                 var jqxhr = $.get(url);
                 jqxhr.done(function(json) 
-                {
-                    if (json.error !== undefined)
-                    {
-                        model.error = json.error;
-                    }
-                    else
-                    {
-                        model.result = json.result;
-                    }
+  		{
+                    model.result  = json.result;
                     updateView();
+		    
+		    if(callback !== undefined)
+			callback();
+              
                 })
                 jqxhr.fail(function(json) 
                 {
-                    let error = JSON.stringify(json);
-                    model.error = error;
-                    updateView();
+                     let error = JSON.stringify(json);
+                     model.error = error;
+                     updateView();
                 })
+
+	    }
+
+
+
+            $('#btnSubmit').click(function() 
+            {
+                let str = $('#filterTxt').val().trim();
+	  	model.filter = encodeURIComponent(str);
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+            });
+
+            //Order Details
+            $('#btnLangAsc').click(function() 
+            {
+                model.category = "SNIP_LANG";
+                model.order = "ASC";
+                model.langOrder = "ASC";
+                model.creatorOrder = "DESC";
+                model.descOrder = "DESC";
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+            });
+
+            $('#btnCreatorAsc').click(function() 
+            {
+                model.category = "SNIP_CREATOR";
+                model.order = "ASC";
+                model.creatorOrder = "ASC";
+                model.langOrder = "DESC";
+                model.descOrder = "DESC";
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+            });
+
+            $('#btnDescAsc').click(function() 
+            {
+                model.category = "SNIP_DESC";
+                model.order = "ASC";
+                model.descOrder = "ASC";
+                model.langOrder = "DESC";
+                model.creatorOrder = "DESC";
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+
+            });
+
+            $('#btnLangDesc').click(function() 
+            {
+                model.category = "SNIP_LANG";
+                model.order = "DESC";
+                model.langOrder = "DESC";
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+            });
+
+            $('#btnCreatorDesc').click(function() 
+            {
+                model.category = "SNIP_CREATOR";
+                model.order = "DESC";
+                model.creatorOrder = "DESC";
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+            });
+
+            $('#btnDescDesc').click(function() 
+            {
+                model.category = "SNIP_DESC";
+                model.order = "DESC";
+                model.descOrder = "DESC";
+                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
             });
             
             // run...
             initializeModel();
-            updateView();
         });        
             
         </script>

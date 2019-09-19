@@ -45,14 +45,17 @@ function getSnippets(req, res)
                         writeResult(res, {'error' : err});
                 else
                 {
-                        con.query("SELECT * FROM SNIPPET", function(err, result, fields)
+			console.log([req.query.filter, req.query.category, req.query.order]);
+		        
+			con.query("SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE '%" + req.query.filter + "%' OR SNIP_CREATOR LIKE '%" +req.query.filter + "%' OR SNIP_DESC LIKE '%" + req.query.filter + "%' ORDER BY " + req.query.category + " " + req.query.order,function(err, result, fields)
                         {
-				if(err)
-					writeResult(res, {'error' : err});
-				else
-				{
-                                	writeResult(res, {'result' : result});
-				}
+				            if(err)
+					            writeResult(res, {'error' : err});
+				            else
+				            {
+                                		writeResult(res, {'result' : result});
+						console.log(result);
+				            }
 
                         });
                 }
