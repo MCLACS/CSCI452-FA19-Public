@@ -114,29 +114,6 @@
                         $('#btnDescDesc').show();
                     }
 
-                    //Query Database
-                   /* let url = 'getSnippets?filter=' + model.filter + '&category=' + model.category + '&order=' + model.order;
-                    console.log(url);
-                    var jqxhr = $.get(url);
-                    jqxhr.done(function(json) 
-                    {
-                        if (json.error !== undefined)
-                        {
-                            model.error = json.error;
-                        }
-                        else
-                        {
-                            model.result = json.result;
-			    updateView();
-                        }
-                    })
-                    jqxhr.fail(function(json) 
-                    {
-                        let error = JSON.stringify(json);
-                        model.error = error;
-                    })*/
-                    
-
                     // populate list with snippets
                     $('#table_body').empty();
                     for (let i in model.result)
