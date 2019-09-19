@@ -68,4 +68,13 @@ VALUES
 ('Superman', 'C++', 'Superman treats superman to be able to make toast explode.'),
 ('Some guy', 'SQL', 'Superman creates superman to know more about archeology.'),
 ('Some guy', 'Java', 'Superman kicks a sloth to know more about archeology.'),
-('A dude', 'C++', 'A sloth holds a sloth to be able to make toast explode.')
+('A dude', 'C++', 'A sloth holds a sloth to be able to make toast explode.');
+
+CREATE USER 'sel_user'@'localhost'
+  IDENTIFIED BY 'password';
+  FLUSH PRIVILEGES;
+GRANT SELECT
+  ON SNIPPETDB.*
+  TO 'sel_user'@'localhost'
+  WITH GRANT OPTION;
+FLUSH PRIVILEGES; 
