@@ -15,6 +15,7 @@ PRIMARY KEY(SNIP_ID)
 
 INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET)
 VALUES
+
 ('Andrew Lockman', 'JavaScript', 'Opens Hole to a dimension where code works', '<h1>This is heading 1</h1> <p>This is some text.</p> <hr> <h2>This is heading 2</h2> <p>This is some other text.</p> <hr>'),
 ('David Eve', 'SQL', 'Git merge error waiting to happen', '#include <iostream> using namespace std; int main() { // print output to user cout << 'Hello World!' << endl; return 0; }'),
 ('Paul Atreides', 'C++', 'My Favorite Code', '/* CallingMethodsInSameClass.java * * illustrates how to call static methods a class * from a method in the same class */ public class CallingMethodsInSameClass { public static void main(String[] args) { printOne(); printOne(); printTwo(); } public static void printOne() { System.out.println('Hello World'); } public static void printTwo() { printOne(); printOne(); } }'),
@@ -64,5 +65,13 @@ VALUES
 ('Watson', 'SQL', 'Starts the singularity', 'SELECT * FROM Customers;'),
 ('David Eve', 'Java', 'Starts the singularity', 'UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;print('Hello, World!')'),
 ('Mark Cohen', 'Java', 'Opens Hole to a dimension where code works', '<h1>This is heading 1</h1> <p>This is some text.</p> <hr> <h2>This is heading 2</h2> <p>This is some other text.</p> <hr>'),
-('Ada Lovelace', 'C++', '01100110011101010110001101101011', '<!DOCTYPE html> <html> <body> <?php echo 'My first PHP script!'; ?> </body> </html>')
+('Ada Lovelace', 'C++', '01100110011101010110001101101011', '<!DOCTYPE html> <html> <body> <?php echo 'My first PHP script!'; ?> </body> </html>');
 
+CREATE USER 'sel_user'@'localhost'
+  IDENTIFIED BY 'password';
+  FLUSH PRIVILEGES;
+GRANT SELECT
+  ON SNIPPETDB.*
+  TO 'sel_user'@'localhost'
+  WITH GRANT OPTION;
+FLUSH PRIVILEGES; 
