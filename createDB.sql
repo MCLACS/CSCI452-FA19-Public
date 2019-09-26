@@ -9,11 +9,13 @@ SNIP_ID INT NOT NULL AUTO_INCREMENT,
 SNIP_CREATOR VARCHAR(255) NOT NULL,
 SNIP_LANG VARCHAR(255) NOT NULL,
 SNIP_DESC LONGTEXT NOT NULL,
+SNIP_SNIPPET LONGTEXT NOT NULL,
 PRIMARY KEY(SNIP_ID)
 );
 
-INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC)
+INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET)
 VALUES
+
 
 ('Austin G.', 'SQL', 'Starts the singularity', 'UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;print("Hello, World!")'),
 ('Ada Lovelace', 'Python', 'Hopefully this doesnt break anything', '#include <iostream> using namespace std; int main(int argc, char *argv[]) { int no; cout << "Enter any number: "; cin >> no; if(no%2==0) { cout<<"Even number"; } else { cout<<"Odd number"; } return 0; }'),
