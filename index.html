@@ -5,8 +5,8 @@
         <meta charset="utf-8">
         <style>
             /* put your css styles here...*/
-
             #btnSubmit { height: 38px;}
+	    .snipRow { cursor: pointer; }
         </style>
     </head>
     <!-- https://www.w3schools.com/icons/icons_reference.asp -->
@@ -50,6 +50,25 @@
         
         <!--put your modal dialogs here...-->
         
+	<div id='snippetDlg' class="modal" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header bg-dark text-light">
+                <h5 id='snippetTitle' class="modal-title">Test</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p id='snippetText'></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <script>
         /* global $ */
         // put your JavaScript code here...
@@ -119,6 +138,8 @@
                     for (let i in model.result)
                     {
                         let row = $("<tr></tr>");
+			row.attr("id", i);
+			row.addClass("snipRow");
 
                         let item = $("<td></td>");
                         item.text(model.result[i].SNIP_LANG);
@@ -224,6 +245,15 @@
                 model.order = "DESC";
                 model.descOrder = "DESC";
                 sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
+            });
+
+           $(document).on("click",".snipRow",function() 
+            {
+		$('#snippetText').empty();
+		$('#snippetTitle').empty();
+                $('#snippetText').append(model.result[$(this).attr("id")].SNIP_SNIPPET);
+                $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
+                $('#snippetDlg').modal('show');
             });
             
             // run...
