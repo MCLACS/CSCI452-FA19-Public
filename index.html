@@ -248,10 +248,17 @@
             });
 
            $(document).on("click",".snipRow",function() 
-            {
+            {   
+		let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;
+
+		//replaces the < and > of the HTML tags and replaces them in a way that html can print
+		formatted = formatted.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		//code is stored preformatted in the database so just add pre tags
+		formatted = "<pre>" + formatted + "</pre>";		
+		
 		$('#snippetText').empty();
 		$('#snippetTitle').empty();
-                $('#snippetText').append(model.result[$(this).attr("id")].SNIP_SNIPPET);
+                $('#snippetText').append(formatted);
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
             });
