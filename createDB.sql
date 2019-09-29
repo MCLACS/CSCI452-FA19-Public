@@ -68,6 +68,22 @@ VALUES
 ('Watson', 'Python', 'Hopefully this doesnt break anything', 'document.getElementById("demo").innerHTML = "Hello Dolly.";'),
 ('Ada Lovelace', 'Python', 'Starts the singularity', '#include <iostream> using namespace std; int main() { // print output to user cout << "Hello World!" << endl; return 0; }');
 
+CREATE TABLE QUESTION(
+  QUEST_ID INT NOT NULL AUTO_INCREMENT,
+  QUEST_QUESTION VARCHAR(255) NOT NULL,
+  QUEST_ANSWER VARCHAR(255) NOT NULL,
+  PRIMARY KEY(QUEST_ID)
+);
+
+CREATE TABLE ACCOUNT(
+  ACC_ID INT NOT NULL AUTO_INCREMENT,
+  ACC_EMAIL VARCHAR(255) UNIQUE NOT NULL,
+  ACC_PASSWORD VARCHAR(60) NOT NULL,
+  ACC_QUESTION_ONE INT REFERENCES QUESTION(QUEST_ID),
+  ACC_QUESTION_TWO INT REFERENCES QUESTION(QUEST_ID),
+  PRIMARY KEY(ACC_ID)
+);
+
 CREATE USER 'sel_user'@'localhost'
   IDENTIFIED BY 'password';
   FLUSH PRIVILEGES;
