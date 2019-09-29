@@ -8,6 +8,11 @@
             #btnSubmit { height: 38px;}
 	    .snipRow { cursor: pointer; }
         </style>
+	<!--Needed for Syntax Highlighing -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/an-old-hope.min.css">
+	
     </head>
     <!-- https://www.w3schools.com/icons/icons_reference.asp -->
     <body>
@@ -47,8 +52,8 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
-        
-        <!--put your modal dialogs here...-->
+
+<!--put your modal dialogs here...-->
         
 	<div id='snippetDlg' class="modal" tabindex="-1" role="dialog">
           <div class="modal-dialog modal-lg" role="document">
@@ -60,7 +65,7 @@
                 </button>
               </div>
               <div class="modal-body">
-                <p id='snippetText'></p>
+                <pre><code id='snippetText'></code></pre>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -135,6 +140,7 @@
 
                     // populate list with snippets
                     $('#table_body').empty();
+		   // $('#snippetText').empty();
                     for (let i in model.result)
                     {
                         let row = $("<tr></tr>");
@@ -152,6 +158,8 @@
                         item = $("<td></td>");
                         item.text(model.result[i].SNIP_DESC);
                         row.append(item);
+
+		//	$("#snippetText").addClass(model.result[i].SNIP_LANG);
                         
                         $("#table_body").append(row);
                     }
@@ -250,15 +258,14 @@
            $(document).on("click",".snipRow",function() 
             {   
 		let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;
-
 		//replaces the < and > of the HTML tags and replaces them in a way that html can print
-		formatted = formatted.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-		//code is stored preformatted in the database so just add pre tags
-		formatted = "<pre>" + formatted + "</pre>";		
+		//commented code below only needed if not using highlight.js
+		//formatted = formatted.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 		
 		$('#snippetText').empty();
 		$('#snippetTitle').empty();
-                $('#snippetText').append(formatted);
+		//needed for syntax highlighting, also auto escapes html tags.
+                $('#snippetText').append(hljs.highlightAuto(formatted).value);
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
             });
