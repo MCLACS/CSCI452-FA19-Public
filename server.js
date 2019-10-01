@@ -107,6 +107,19 @@ function getSnippets(req, res)
         });
 }
 
+function validatePassword(pass)
+{
+  if (pass == undefined)
+  {
+    return false;
+  }
+  else
+  {
+    var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return re.test(pass);
+  }
+}
+
 function serveIndex(req, res)
 {
   res.writeHead(200, {'Content-Type': 'text/html'});
