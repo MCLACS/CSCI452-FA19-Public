@@ -6,6 +6,7 @@ var http = require('http');
 var fs = require('fs');
 
 var mysql = require('mysql');
+const bcrypt = require('bcrypt');
 
 app.listen(process.env.PORT,  process.env.IP, startHandler())
 
@@ -19,6 +20,7 @@ const conInfo =
 
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
+app.all('/register', register);
 
 function startHandler()
 {
@@ -30,6 +32,45 @@ function writeResult(res, obj)
         res.writeHead(200, {'Content-Type': 'application/json'});
         res.write(JSON.stringify(obj));
         res.end('');
+}
+
+function register(req, res)
+{
+  if (req.query.email == undefined || !validateEmail(req.query.email))
+  {
+    writeResult(res, {'error' : "Please specify a valid email"});
+  }
+
+  if (req.query.password == undefined || !validatePassword(req.query.password))
+  {
+    writeResult(res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
+  }
+
+  var con = mysql.createConnection(conInfo);
+  con.connect(function(err) 
+  {
+    if (err) 
+      writeResult(res, {'error' : err});
+    else
+    {
+      let hash = bcrypt.hashSync(req.query.password, 12);
+      con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
+      {
+        if (err) 
+        {
+          if (err.code == "ER_DUP_ENTRY")
+            err = "User account already exists.";
+          writeResult(res, {'error' : err});
+        }
+        else
+        {
+          writeResult(res, {'result' : result});
+	  console.log(result);
+        }
+      });
+    }
+  });
+  
 }
 
 function getSnippets(req, res)
