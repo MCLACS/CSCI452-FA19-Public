@@ -7,6 +7,7 @@
             /* put your css styles here...*/
             #btnSubmit { height: 38px;}
 	    .snipRow { cursor: pointer; }
+	    #accountError { color: red;} 
         </style>
     </head>
     <!-- https://www.w3schools.com/icons/icons_reference.asp -->
@@ -100,7 +101,8 @@
                                 <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
                             </div>
                         </form>
-                    </div>
+			<pre id="accountError"></pre>
+		    </div>
                     <div class="modal-footer">
                         <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Confirm</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -278,13 +280,12 @@
                 });
 
                 $('#confirmRegisterBtn').click(function(){
+		    $('#accountError').empty();
                     let email = $('#regEmail').val().trim();
                     let password = $('#regPassword').val().trim();
-                    sendRequest("register?email="+email+"&password="+password, function(){ 
-                        if (model.error == undefined)
-                            sendRequest("getSnippets");
-                    });
-                 $('#registerDlg').modal('hide');
+                    //sendRequest("register?email="+email+"&password="+password);
+                    sendRequest("register?email="+email+"&password="+password);
+		    $('#registerDlg').modal('hide');
                 });
                 // run...
                 initializeModel();

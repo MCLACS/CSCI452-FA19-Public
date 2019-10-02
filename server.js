@@ -58,13 +58,12 @@ function register(req, res)
       {
         if (err) 
         {
-          if (err.code == "ER_DUP_ENTRY")
-            err = "User account already exists.";
-          writeResult(res, {'error' : err});
+            writeResult(res, {'error' : err});
+	    console.log(err);
         }
         else
         {
-          writeResult(res, {'result' : result});
+          //writeResult(res, {'result' : result});
 	  console.log(result);
         }
       });
@@ -89,9 +88,8 @@ function getSnippets(req, res)
 			console.log([req.query.filter, req.query.category, req.query.order]);
 		 	let filter = "%" +  req.query.filter + "%" ;
 
-
 			console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
-		//	con.query("SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE '%" + req.query.filter + "%' OR SNIP_CREATOR LIKE '%" +req.query.filter + "%' OR SNIP_DESC LIKE '%" + req.query.filter + "%' ORDER BY " + req.query.category + " " + req.query.order,function(err, result, fields)
+			
 			con.query('SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE ? OR SNIP_CREATOR LIKE ? OR SNIP_DESC LIKE ? ORDER BY ' + req.query.category + " " + req.query.order, [filter, filter, filter], function(err, result, fields)
                         {
 				            if(err)
