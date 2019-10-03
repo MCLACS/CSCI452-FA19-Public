@@ -7,7 +7,7 @@
             /* put your css styles here...*/
             #btnSubmit { height: 38px;}
 	    .snipRow { cursor: pointer; }
-	    #accountError { color: red;} 
+	    #regError { color: red;} 
         </style>
     </head>
     <!-- https://www.w3schools.com/icons/icons_reference.asp -->
@@ -101,7 +101,7 @@
                                 <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
                             </div>
                         </form>
-			<pre id="accountError"></pre>
+			<pre id="regError"></pre>
 		    </div>
                     <div class="modal-footer">
                         <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Confirm</button>
@@ -119,6 +119,7 @@
                 let model = {};
                 function initializeModel() {
                     model.error = "";
+		    model.regError = "";
                     model.result = {};
                     model.filter = "";
                     model.category = "SNIP_LANG";
@@ -138,6 +139,12 @@
                         $("#response").text(model.error);
                     }
                     else {
+			if (model.regError != undefined) {
+                            $("#regError").text(model.regError);
+                    	}
+			else {
+			    $('#registerDlg').modal('hide');
+			}
                         // Display proper sorting buttons
                         if (model.langOrder == "DESC") {
                             $('#btnLangAsc').show();
@@ -195,6 +202,8 @@
                     var jqxhr = $.get(url);
                     jqxhr.done(function (json) {
                         model.result = json.result;
+			//erorr check?
+			model.regError = json.regError;
                         updateView();
 
                         if (callback !== undefined)
@@ -280,12 +289,16 @@
                 });
 
                 $('#confirmRegisterBtn').click(function(){
-		    $('#accountError').empty();
+		    $('#regError').empty();
                     let email = $('#regEmail').val().trim();
                     let password = $('#regPassword').val().trim();
                     //sendRequest("register?email="+email+"&password="+password);
                     sendRequest("register?email="+email+"&password="+password);
-		    $('#registerDlg').modal('hide');
+		    //if (model.regError == undefined)
+		      //  $('#registerDlg').modal('hide');
+		    //else
+		//	$('#regError').text(model.regError);
+		    //model.regError = "";
                 });
                 // run...
                 initializeModel();

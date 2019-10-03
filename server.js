@@ -38,38 +38,45 @@ function register(req, res)
 {
   if (req.query.email == undefined || !validateEmail(req.query.email))
   {
-    writeResult(res, {'error' : "Please specify a valid email"});
+    console.log("validateEmail failed?");
+    writeResult(res, {'regError' : "Email invalid or already used."});
   }
 
-  if (req.query.password == undefined || !validatePassword(req.query.password))
+  else
   {
-    writeResult(res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
-  }
+	console.log("moving on...");
+    if (!validatePassword(req.query.password))
+    {
+      writeResult(res, {'regError' : "Password must have a minimum of eight characters, at least one letter and one number"});
+    } 
 
-  var con = mysql.createConnection(conInfo);
-  con.connect(function(err) 
-  {
-    if (err) 
-      writeResult(res, {'error' : err});
     else
     {
-      let hash = bcrypt.hashSync(req.query.password, 12);
-      con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      {
-        if (err) 
-        {
-            writeResult(res, {'error' : err});
-	    console.log(err);
-        }
-        else
-        {
-          //writeResult(res, {'result' : result});
-	  console.log(result);
-        }
-      });
-    }
-  });
-  
+        var con = mysql.createConnection(conInfo);
+        con.connect(function(err) 
+  	{
+    	    if (err) 
+      	        writeResult(res, {'error' : err});
+    	    else
+    	    {
+      		let hash = bcrypt.hashSync(req.query.password, 12);
+      		con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
+      		{
+        		if (err) 
+        		{
+            			writeResult(res, {'error' : err});
+	    			console.log(err);
+        		}
+        		else
+        		{
+          			writeResult(res, {'regError' : ""});
+	  			//console.log(result);
+        		}
+      		});
+    	    }
+  	});
+      }
+  }
 }
 
 function getSnippets(req, res)
@@ -111,10 +118,58 @@ function validateEmail(email)
   {
     return false;
   }
-  else
+
+  //SELECT COUNT(*) FROM SNIPPETDB.ACCOUNT WHERE ACC_EMAIL='asdf@asdf.com';
+
+  /* if (con.query('SELECT COUNT(*) FROM ACCOUNT WHERE ACC_EMAIL=?', [email]) > 0)
+  {
+    return false;
+  } */
+
+/*  else
   {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+  } */
+
+
+  else 
+  {
+	var con = mysql.createConnection(conInfo);
+        con.connect(function(err)
+        {
+                if(err)
+                        writeResult(res, {'error' : err});
+                else
+                {
+                     con.query('SELECT COUNT(*) AS total FROM ACCOUNT WHERE ACC_EMAIL=?', [email], function(err, result, fields)
+                        {
+                                            if(err)
+                                                    writeResult(res, {'error' : err});
+                                            else
+                                            {
+                                                //writeResult(res, {'result' : result});
+						let yeet = parseInt(JSON.stringify(result[0].total));	
+                                                //console.log();
+                                                console.log("email count: " + yeet);
+                                                if (yeet > 0)
+						{
+						    console.log("dup detected");
+						    console.log(false);
+						    return false;
+						}
+
+						else
+						{
+						    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+						    console.log(re.test(String(email).toLowerCase()));
+						    return re.test(String(email).toLowerCase());
+						}
+                                            }
+
+                        });
+                }
+        });
   }
 }
 
