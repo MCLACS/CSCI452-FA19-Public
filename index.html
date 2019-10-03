@@ -1,4 +1,4 @@
-<html>
+﻿<html>
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -7,6 +7,7 @@
             /* put your css styles here...*/
             #btnSubmit { height: 38px;}
 	    .snipRow { cursor: pointer; }
+	    #accountError { color: red;} 
         </style>
 	<!--Needed for Syntax Highlighing -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
@@ -18,8 +19,16 @@
     <body>
         <div class="container">
             <!--put your html code here...-->
-            <h4>Gitter(tm)(c).gov.org.io</h4>
-            
+            <!--<h4>Gitter(tm)(c).gov.org.io</h4>-->
+
+            <nav class="navbar navbar-light bg-white">
+                <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" id='registerBtn'> Register</a></li>
+                </ul>
+            </nav>
+
+
             <form class="form-inline search-bar float-right">
                 <input class="form-control" type="text" placeholder="Filter" aria-label="" id='filterTxt'>
                 <button id='btnSubmit' type="button" class="btn btn-default float-left"><span class="fa fa-search" aria-hidden="true"></span></button>
@@ -29,26 +38,29 @@
 
             <table class="table">
                 <thead>
-                  <tr>
-                    <th scope="col">Language 
-                        <button id='btnLangAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
-                        <button id='btnLangDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
-                    </th>
-                    <th scope="col">Creator 
-                        <button id='btnCreatorAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
-                        <button id='btnCreatorDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
-                    </th>
-                    <th scope="col">Description 
-                        <button id='btnDescAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
-                        <button id='btnDescDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
-                    </th>
-                  </tr>
+                    <tr>
+                        <th scope="col">
+                            Language
+                            <button id='btnLangAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
+                            <button id='btnLangDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
+                        </th>
+                        <th scope="col">
+                            Creator
+                            <button id='btnCreatorAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
+                            <button id='btnCreatorDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
+                        </th>
+                        <th scope="col">
+                            Description
+                            <button id='btnDescAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
+                            <button id='btnDescDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
+                        </th>
+                    </tr>
                 </thead>
                 <tbody id='table_body'>
                 </tbody>
             </table>
         </div>
-        
+
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
@@ -70,210 +82,223 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>
-            </div>
           </div>
+        </div>
+    </div>
+
+        <!--Modal for account registration-->
+        <div id='registerDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Register</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>New Account</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="regEmail" name="regEmail" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
+                            </div>
+                        </form>
+	                		<pre id="accountError"></pre>
+		                </div>
+                    <div class="modal-footer">
+                        <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Confirm</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script>
-        /* global $ */
-        // put your JavaScript code here...
-        $(document).ready(function() 
-        {
-            // model...
-            let model = {};
-            function initializeModel()
-            {
-                model.error = "";
-                model.result = {};
-                model.filter = "";
-                model.category = "SNIP_LANG";
-                model.order = "DESC";
-                
-                //Button Displays
-                model.langOrder = "DESC";
-                model.creatorOrder = "DESC";
-                model.descOrder = "DESC";
+            /* global $ */
+            // put your JavaScript code here...
+            $(document).ready(function () {
+                // model...
+                let model = {};
+                function initializeModel() {
+                    model.error = "";
+                    model.result = {};
+                    model.filter = "";
+                    model.category = "SNIP_LANG";
+                    model.order = "DESC";
 
-		sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-            }
-            
-            // view...
-            function updateView()
-            {
-                if (model.error != "")
-                {
-                    $("#response").text(model.error);
+                    //Button Displays
+                    model.langOrder = "DESC";
+                    model.creatorOrder = "DESC";
+                    model.descOrder = "DESC";
+
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 }
-                else
-                {
-                    // Display proper sorting buttons
-                    if(model.langOrder == "DESC")
-                    {
-                        $('#btnLangAsc').show();
-                        $('#btnLangDesc').hide();
-                    }
-                    else
-                    {
-                        $('#btnLangAsc').hide();
-                        $('#btnLangDesc').show();
-                    }
-                    if(model.creatorOrder == "DESC")
-                    {
-                        $('#btnCreatorAsc').show();
-                        $('#btnCreatorDesc').hide();
-                    }
-                    else
-                    {
-                        $('#btnCreatorAsc').hide();
-                        $('#btnCreatorDesc').show();
-                    }
-                    if(model.descOrder == "DESC")
-                    {
-                        $('#btnDescAsc').show();
-                        $('#btnDescDesc').hide();
-                    }
-                    else
-                    {
-                        $('#btnDescAsc').hide();
-                        $('#btnDescDesc').show();
-                    }
 
-                    // populate list with snippets
-                    $('#table_body').empty();
-		   // $('#snippetText').empty();
-                    for (let i in model.result)
-                    {
-                        let row = $("<tr></tr>");
-			row.attr("id", i);
-			row.addClass("snipRow");
+                // view...
+                function updateView() {
+                    if (model.error != "") {
+                        $("#response").text(model.error);
+                    }
+                    else {
+                        // Display proper sorting buttons
+                        if (model.langOrder == "DESC") {
+                            $('#btnLangAsc').show();
+                            $('#btnLangDesc').hide();
+                        }
+                        else {
+                            $('#btnLangAsc').hide();
+                            $('#btnLangDesc').show();
+                        }
+                        if (model.creatorOrder == "DESC") {
+                            $('#btnCreatorAsc').show();
+                            $('#btnCreatorDesc').hide();
+                        }
+                        else {
+                            $('#btnCreatorAsc').hide();
+                            $('#btnCreatorDesc').show();
+                        }
+                        if (model.descOrder == "DESC") {
+                            $('#btnDescAsc').show();
+                            $('#btnDescDesc').hide();
+                        }
+                        else {
+                            $('#btnDescAsc').hide();
+                            $('#btnDescDesc').show();
+                        }
 
-                        let item = $("<td></td>");
-                        item.text(model.result[i].SNIP_LANG);
-                        row.append(item);
+                        // populate list with snippets
+                        $('#table_body').empty();
+                        for (let i in model.result) {
+                            let row = $("<tr></tr>");
+                            row.attr("id", i);
+                            row.addClass("snipRow");
 
-                        item = $("<td></td>");
-                        item.text(model.result[i].SNIP_CREATOR);
-                        row.append(item);
+                            let item = $("<td></td>");
+                            item.text(model.result[i].SNIP_LANG);
+                            row.append(item);
+                          
+                            item = $("<td></td>");
+                            item.text(model.result[i].SNIP_CREATOR);
+                            row.append(item);
 
-                        item = $("<td></td>");
-                        item.text(model.result[i].SNIP_DESC);
-                        row.append(item);
+                            item = $("<td></td>");
+                            item.text(model.result[i].SNIP_DESC);
+                            row.append(item);
 
-		//	$("#snippetText").addClass(model.result[i].SNIP_LANG);
-                        
-                        $("#table_body").append(row);
+                            $("#table_body").append(row);
+                        }
                     }
                 }
+
+                // controller...
+                function sendRequest(url, callback) {
+                    console.log(url);
+                    var jqxhr = $.get(url);
+                    jqxhr.done(function (json) {
+                        model.result = json.result;
+                        updateView();
+
+                        if (callback !== undefined)
+                            callback();
+
+                    })
+                    jqxhr.fail(function (json) {
+                        let error = JSON.stringify(json);
+                        model.error = error;
+                        updateView();
+                    })
+
+                }
+
+                $('#btnSubmit').click(function () {
+                    let str = $('#filterTxt').val().trim();
+                    model.filter = encodeURIComponent(str);
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                });
+
+                //Order Details
+                $('#btnLangAsc').click(function () {
+                    model.category = "SNIP_LANG";
+                    model.order = "ASC";
+                    model.langOrder = "ASC";
+                    model.creatorOrder = "DESC";
+                    model.descOrder = "DESC";
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                });
+
+                $('#btnCreatorAsc').click(function () {
+                    model.category = "SNIP_CREATOR";
+                    model.order = "ASC";
+                    model.creatorOrder = "ASC";
+                    model.langOrder = "DESC";
+                    model.descOrder = "DESC";
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                });
+
+                $('#btnDescAsc').click(function () {
+                    model.category = "SNIP_DESC";
+                    model.order = "ASC";
+                    model.descOrder = "ASC";
+                    model.langOrder = "DESC";
+                    model.creatorOrder = "DESC";
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+
+                });
+
+                $('#btnLangDesc').click(function () {
+                    model.category = "SNIP_LANG";
+                    model.order = "DESC";
+                    model.langOrder = "DESC";
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                });
+
+                $('#btnCreatorDesc').click(function () {
+                    model.category = "SNIP_CREATOR";
+                    model.order = "DESC";
+                    model.creatorOrder = "DESC";
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                });
                 
-            }
-            
-            // controller...
-	    function sendRequest(url, callback)
-	    {
-		console.log(url);
-                var jqxhr = $.get(url);
-                jqxhr.done(function(json) 
-  		{
-                    model.result  = json.result;
-                    updateView();
-		    
-		    if(callback !== undefined)
-			callback();
-              
-                })
-                jqxhr.fail(function(json) 
-                {
-                     let error = JSON.stringify(json);
-                     model.error = error;
-                     updateView();
-                })
-
-	    }
-
-
-
-            $('#btnSubmit').click(function() 
-            {
-                let str = $('#filterTxt').val().trim();
-	  	model.filter = encodeURIComponent(str);
-                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-            });
-
-            //Order Details
-            $('#btnLangAsc').click(function() 
-            {
-                model.category = "SNIP_LANG";
-                model.order = "ASC";
-                model.langOrder = "ASC";
-                model.creatorOrder = "DESC";
-                model.descOrder = "DESC";
-                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-            });
-
-            $('#btnCreatorAsc').click(function() 
-            {
-                model.category = "SNIP_CREATOR";
-                model.order = "ASC";
-                model.creatorOrder = "ASC";
-                model.langOrder = "DESC";
-                model.descOrder = "DESC";
-                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-            });
-
-            $('#btnDescAsc').click(function() 
-            {
-                model.category = "SNIP_DESC";
-                model.order = "ASC";
-                model.descOrder = "ASC";
-                model.langOrder = "DESC";
-                model.creatorOrder = "DESC";
-                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-
-            });
-
-            $('#btnLangDesc').click(function() 
-            {
-                model.category = "SNIP_LANG";
-                model.order = "DESC";
-                model.langOrder = "DESC";
-                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-            });
-
-            $('#btnCreatorDesc').click(function() 
-            {
-                model.category = "SNIP_CREATOR";
-                model.order = "DESC";
-                model.creatorOrder = "DESC";
-                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-            });
-
-            $('#btnDescDesc').click(function() 
-            {
-                model.category = "SNIP_DESC";
-                model.order = "DESC";
-                model.descOrder = "DESC";
-                sendRequest("getSnippets?filter="+ model.filter + "&category="+ model.category + "&order=" + model.order);
-            });
+                $('#btnDescDesc').click(function () {
+                    model.category = "SNIP_DESC";
+                    model.order = "DESC";
+                    model.descOrder = "DESC";
+                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                });
 
            $(document).on("click",".snipRow",function() 
             {   
-		let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;
-		//replaces the < and > of the HTML tags and replaces them in a way that html can print
-		//commented code below only needed if not using highlight.js
-		//formatted = formatted.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-		
-		$('#snippetText').empty();
-		$('#snippetTitle').empty();
-		//needed for syntax highlighting, also auto escapes html tags.
+		            let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;		
+		            $('#snippetText').empty();
+		            $('#snippetTitle').empty();
+		            //needed for syntax highlighting, also auto escapes html tags.
                 $('#snippetText').append(hljs.highlightAuto(formatted).value);
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
+             });
+
+             $('#registerBtn').click(function(){
+                $('#regEmail').val('');
+                $('#regPassword').val('');
+                $('#registerDlg').modal('show');
+             });
+
+             $('#confirmRegisterBtn').click(function(){
+		            $('#accountError').empty();
+                let email = $('#regEmail').val().trim();
+                let password = $('#regPassword').val().trim();
+                //sendRequest("register?email="+email+"&password="+password);
+                sendRequest("register?email="+email+"&password="+password);
+		            $('#registerDlg').modal('hide');
             });
-            
             // run...
             initializeModel();
-        });        
-            
+
+            });
+
         </script>
     </body>
 
