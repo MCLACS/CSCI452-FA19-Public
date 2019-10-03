@@ -119,20 +119,6 @@ function validateEmail(email)
     return false;
   }
 
-  //SELECT COUNT(*) FROM SNIPPETDB.ACCOUNT WHERE ACC_EMAIL='asdf@asdf.com';
-
-  /* if (con.query('SELECT COUNT(*) FROM ACCOUNT WHERE ACC_EMAIL=?', [email]) > 0)
-  {
-    return false;
-  } */
-
-/*  else
-  {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  } */
-
-
   else 
   {
 	var con = mysql.createConnection(conInfo);
@@ -149,10 +135,10 @@ function validateEmail(email)
                                             else
                                             {
                                                 //writeResult(res, {'result' : result});
-						let yeet = parseInt(JSON.stringify(result[0].total));	
+						let eCount = parseInt(JSON.stringify(result[0].total));	
                                                 //console.log();
-                                                console.log("email count: " + yeet);
-                                                if (yeet > 0)
+                                                console.log("email count: " + eCount);
+                                                if (eCount > 0)
 						{
 						    console.log("dup detected");
 						    console.log(false);
@@ -164,13 +150,14 @@ function validateEmail(email)
 						    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 						    console.log(re.test(String(email).toLowerCase()));
 						    return re.test(String(email).toLowerCase());
-						}
+						} 
                                             }
 
                         });
                 }
         });
   }
+ 
 }
 
 function validatePassword(pass)
