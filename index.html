@@ -7,7 +7,7 @@
             /* put your css styles here...*/
             #btnSubmit { height: 38px;}
 	    .snipRow { cursor: pointer; }
-	    #accountError { color: red;} 
+	    #regError { color: red;} 
         </style>
 	<!--Needed for Syntax Highlighing -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
@@ -106,8 +106,10 @@
                                 <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
                             </div>
                         </form>
-	                		<pre id="accountError"></pre>
-		                </div>
+			                  <pre id="regError"></pre>
+		                 </div>
+
+	                		
                     <div class="modal-footer">
                         <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Confirm</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -124,6 +126,7 @@
                 let model = {};
                 function initializeModel() {
                     model.error = "";
+		    model.regError = "";
                     model.result = {};
                     model.filter = "";
                     model.category = "SNIP_LANG";
@@ -143,7 +146,10 @@
                         $("#response").text(model.error);
                     }
                     else {
-                        // Display proper sorting buttons
+                        //add registration error to modal
+			$("#regError").text(model.regError);
+                        
+			// Display proper sorting buttons
                         if (model.langOrder == "DESC") {
                             $('#btnLangAsc').show();
                             $('#btnLangDesc').hide();
@@ -198,7 +204,10 @@
                     console.log(url);
                     var jqxhr = $.get(url);
                     jqxhr.done(function (json) {
-                        model.result = json.result;
+			if (json.result != undefined)
+                            model.result = json.result;
+			//Adding registration error to model
+			model.regError = json.regError;
                         updateView();
 
                         if (callback !== undefined)
@@ -269,7 +278,7 @@
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 });
 
-           $(document).on("click",".snipRow",function() 
+            $(document).on("click",".snipRow",function() 
             {   
 		            let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;		
 		            $('#snippetText').empty();
@@ -286,21 +295,22 @@
                 $('#registerDlg').modal('show');
              });
 
-             $('#confirmRegisterBtn').click(function(){
-		            $('#accountError').empty();
+            $('#confirmRegisterBtn').click(function(){
+		            $('#regError').empty();
                 let email = $('#regEmail').val().trim();
                 let password = $('#regPassword').val().trim();
-                //sendRequest("register?email="+email+"&password="+password);
-                sendRequest("register?email="+email+"&password="+password);
-		            $('#registerDlg').modal('hide');
+                sendRequest("register?email="+email+"&password="+password, function() {
+			              if (model.regError == undefined || model.regError == "") {
+                        $('#registerDlg').modal('hide');
+                    }
+		            });
             });
             // run...
             initializeModel();
 
-            });
+        });
 
         </script>
     </body>
-
 </html>
 

@@ -36,40 +36,51 @@ function writeResult(res, obj)
 
 function register(req, res)
 {
-  if (req.query.email == undefined || !validateEmail(req.query.email))
-  {
-    writeResult(res, {'error' : "Please specify a valid email"});
-  }
 
-  if (req.query.password == undefined || !validatePassword(req.query.password))
+  validateEmail(req.query.email, function(regError)
   {
-    writeResult(res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
-  }
+    if (!regError)
+    {
+      writeResult(res, {'regError' : "Email invalid or already used."});
+    }
 
-  var con = mysql.createConnection(conInfo);
-  con.connect(function(err) 
-  {
-    if (err) 
-      writeResult(res, {'error' : err});
     else
     {
-      let hash = bcrypt.hashSync(req.query.password, 12);
-      con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      {
-        if (err) 
-        {
-            writeResult(res, {'error' : err});
-	    console.log(err);
-        }
-        else
-        {
-          //writeResult(res, {'result' : result});
-	  console.log(result);
-        }
-      });
+	validatePassword(req.query.password, function(regError)
+	{
+            if (!regError)
+            {
+                writeResult(res, {'regError' : "Password must have a minimum of eight characters, at least one letter and one number"});
+            } 
+
+            else
+            {
+                var con = mysql.createConnection(conInfo);
+                con.connect(function(err) 
+  	        {
+    	            if (err) 
+      	                writeResult(res, {'error' : err});
+    	            else
+    	            {
+      		        let hash = bcrypt.hashSync(req.query.password, 12);
+      		        con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
+      		        {
+        		    if (err) 
+        		    {
+            			writeResult(res, {'error' : err});
+	    			console.log(err);
+        		    }
+        		    else
+        		    {
+          			writeResult(res, {'regError' : ""});
+        		    }
+      		        });
+    	            }
+  	        });
+            }
+	});
     }
   });
-  
 }
 
 function getSnippets(req, res)
@@ -105,29 +116,58 @@ function getSnippets(req, res)
         });
 }
 
-function validateEmail(email) 
+function validateEmail(email, callback) 
 {
   if (email == undefined)
   {
-    return false;
+    callback(false);
   }
-  else
+
+  else 
   {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+	var con = mysql.createConnection(conInfo);
+        con.connect(function(err)
+        {
+                if(err)
+                        writeResult(res, {'error' : err});
+                else
+                {
+                     con.query('SELECT COUNT(*) AS total FROM ACCOUNT WHERE ACC_EMAIL=?', [email], function(err, result, fields)
+                     {
+                            if(err)
+                                writeResult(res, {'error' : err});
+                            else
+                            {
+				let eCount = parseInt(JSON.stringify(result[0].total));	
+                                if (eCount > 0)
+				{
+				    callback(false);
+				}
+
+				else
+				{
+				    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				    callback(re.test(String(email).toLowerCase()));
+				} 
+                            }
+
+                     });
+                }
+        });
   }
+ 
 }
 
-function validatePassword(pass)
+function validatePassword(pass, callback)
 {
   if (pass == undefined)
   {
-    return false;
+    callback(false);
   }
   else
   {
     var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return re.test(pass);
+    callback(re.test(pass));
   }
 }
 
