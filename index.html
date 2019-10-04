@@ -139,13 +139,10 @@
                         $("#response").text(model.error);
                     }
                     else {
-			if (model.regError != undefined) {
-                            $("#regError").text(model.regError);
-                    	}
-			else {
-			    $('#registerDlg').modal('hide');
-			}
-                        // Display proper sorting buttons
+                        //add registration error to modal
+			$("#regError").text(model.regError);
+                        
+			// Display proper sorting buttons
                         if (model.langOrder == "DESC") {
                             $('#btnLangAsc').show();
                             $('#btnLangDesc').hide();
@@ -201,8 +198,9 @@
                     console.log(url);
                     var jqxhr = $.get(url);
                     jqxhr.done(function (json) {
-                        model.result = json.result;
-			//erorr check?
+			if (json.result != undefined)
+                            model.result = json.result;
+			//Adding registration error to model
 			model.regError = json.regError;
                         updateView();
 
@@ -292,13 +290,11 @@
 		    $('#regError').empty();
                     let email = $('#regEmail').val().trim();
                     let password = $('#regPassword').val().trim();
-                    //sendRequest("register?email="+email+"&password="+password);
-                    sendRequest("register?email="+email+"&password="+password);
-		    //if (model.regError == undefined)
-		      //  $('#registerDlg').modal('hide');
-		    //else
-		//	$('#regError').text(model.regError);
-		    //model.regError = "";
+                    sendRequest("register?email="+email+"&password="+password, function() {
+			if (model.regError == undefined || model.regError == "") {
+                           $('#registerDlg').modal('hide');
+                        }
+		    });
                 });
                 // run...
                 initializeModel();

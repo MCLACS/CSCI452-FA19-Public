@@ -36,47 +36,51 @@ function writeResult(res, obj)
 
 function register(req, res)
 {
-  if (req.query.email == undefined || !validateEmail(req.query.email))
-  {
-    console.log("validateEmail failed?");
-    writeResult(res, {'regError' : "Email invalid or already used."});
-  }
 
-  else
+  validateEmail(req.query.email, function(regError)
   {
-	console.log("moving on...");
-    if (!validatePassword(req.query.password))
+    if (!regError)
     {
-      writeResult(res, {'regError' : "Password must have a minimum of eight characters, at least one letter and one number"});
-    } 
+      writeResult(res, {'regError' : "Email invalid or already used."});
+    }
 
     else
     {
-        var con = mysql.createConnection(conInfo);
-        con.connect(function(err) 
-  	{
-    	    if (err) 
-      	        writeResult(res, {'error' : err});
-    	    else
-    	    {
-      		let hash = bcrypt.hashSync(req.query.password, 12);
-      		con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      		{
-        		if (err) 
-        		{
+	validatePassword(req.query.password, function(regError)
+	{
+            if (!regError)
+            {
+                writeResult(res, {'regError' : "Password must have a minimum of eight characters, at least one letter and one number"});
+            } 
+
+            else
+            {
+                var con = mysql.createConnection(conInfo);
+                con.connect(function(err) 
+  	        {
+    	            if (err) 
+      	                writeResult(res, {'error' : err});
+    	            else
+    	            {
+      		        let hash = bcrypt.hashSync(req.query.password, 12);
+      		        con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
+      		        {
+        		    if (err) 
+        		    {
             			writeResult(res, {'error' : err});
 	    			console.log(err);
-        		}
-        		else
-        		{
+        		    }
+        		    else
+        		    {
           			writeResult(res, {'regError' : ""});
-	  			//console.log(result);
-        		}
-      		});
-    	    }
-  	});
-      }
-  }
+        		    }
+      		        });
+    	            }
+  	        });
+            }
+	});
+    }
+  });
 }
 
 function getSnippets(req, res)
@@ -112,11 +116,11 @@ function getSnippets(req, res)
         });
 }
 
-function validateEmail(email) 
+function validateEmail(email, callback) 
 {
   if (email == undefined)
   {
-    return false;
+    callback(false);
   }
 
   else 
@@ -129,47 +133,41 @@ function validateEmail(email)
                 else
                 {
                      con.query('SELECT COUNT(*) AS total FROM ACCOUNT WHERE ACC_EMAIL=?', [email], function(err, result, fields)
-                        {
-                                            if(err)
-                                                    writeResult(res, {'error' : err});
-                                            else
-                                            {
-                                                //writeResult(res, {'result' : result});
-						let eCount = parseInt(JSON.stringify(result[0].total));	
-                                                //console.log();
-                                                console.log("email count: " + eCount);
-                                                if (eCount > 0)
-						{
-						    console.log("dup detected");
-						    console.log(false);
-						    return false;
-						}
+                     {
+                            if(err)
+                                writeResult(res, {'error' : err});
+                            else
+                            {
+				let eCount = parseInt(JSON.stringify(result[0].total));	
+                                if (eCount > 0)
+				{
+				    callback(false);
+				}
 
-						else
-						{
-						    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-						    console.log(re.test(String(email).toLowerCase()));
-						    return re.test(String(email).toLowerCase());
-						} 
-                                            }
+				else
+				{
+				    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				    callback(re.test(String(email).toLowerCase()));
+				} 
+                            }
 
-                        });
+                     });
                 }
         });
   }
  
 }
 
-function validatePassword(pass)
+function validatePassword(pass, callback)
 {
   if (pass == undefined)
   {
-    return false;
+    callback(false);
   }
   else
   {
     var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return re.test(pass);
+    callback(re.test(pass));
   }
 }
 
