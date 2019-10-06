@@ -17,7 +17,6 @@ const conInfo =
 	password : process.env.DB_PASS,
 	database : process.env.DB_NAME
 }; 
-const port = 80;
 
 var session = require('express-session'); 
 app.use(session({ secret: 'happy jungle', 

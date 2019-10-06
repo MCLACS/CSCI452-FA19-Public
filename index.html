@@ -131,12 +131,15 @@
                     model.filter = "";
                     model.category = "SNIP_LANG";
                     model.order = "DESC";
+
                     //Button Displays
                     model.langOrder = "DESC";
                     model.creatorOrder = "DESC";
                     model.descOrder = "DESC";
+
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 }
+
                 // view...
                 function updateView() {
                     if (model.error != "") {
@@ -171,12 +174,14 @@
                             $('#btnDescAsc').hide();
                             $('#btnDescDesc').show();
                         }
+
                         // populate list with snippets
                         $('#table_body').empty();
                         for (let i in model.result) {
                             let row = $("<tr></tr>");
                             row.attr("id", i);
                             row.addClass("snipRow");
+
                             let item = $("<td></td>");
                             item.text(model.result[i].SNIP_LANG);
                             row.append(item);
@@ -184,13 +189,16 @@
                             item = $("<td></td>");
                             item.text(model.result[i].SNIP_CREATOR);
                             row.append(item);
+
                             item = $("<td></td>");
                             item.text(model.result[i].SNIP_DESC);
                             row.append(item);
+
                             $("#table_body").append(row);
                         }
                     }
                 }
+
                 // controller...
                 function sendRequest(url, callback) {
                     console.log(url);
@@ -201,20 +209,25 @@
 			//Adding registration error to model
 			model.regError = json.regError;
                         updateView();
+
                         if (callback !== undefined)
                             callback();
+
                     })
                     jqxhr.fail(function (json) {
                         let error = JSON.stringify(json);
                         model.error = error;
                         updateView();
                     })
+
                 }
+
                 $('#btnSubmit').click(function () {
                     let str = $('#filterTxt').val().trim();
                     model.filter = encodeURIComponent(str);
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 });
+
                 //Order Details
                 $('#btnLangAsc').click(function () {
                     model.category = "SNIP_LANG";
@@ -224,6 +237,7 @@
                     model.descOrder = "DESC";
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 });
+
                 $('#btnCreatorAsc').click(function () {
                     model.category = "SNIP_CREATOR";
                     model.order = "ASC";
@@ -232,6 +246,7 @@
                     model.descOrder = "DESC";
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 });
+
                 $('#btnDescAsc').click(function () {
                     model.category = "SNIP_DESC";
                     model.order = "ASC";
@@ -239,13 +254,16 @@
                     model.langOrder = "DESC";
                     model.creatorOrder = "DESC";
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+
                 });
+
                 $('#btnLangDesc').click(function () {
                     model.category = "SNIP_LANG";
                     model.order = "DESC";
                     model.langOrder = "DESC";
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 });
+
                 $('#btnCreatorDesc').click(function () {
                     model.category = "SNIP_CREATOR";
                     model.order = "DESC";
@@ -259,6 +277,7 @@
                     model.descOrder = "DESC";
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 });
+
             $(document).on("click",".snipRow",function() 
             {   
 		            let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;		
@@ -269,11 +288,13 @@
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
              });
+
              $('#registerBtn').click(function(){
                 $('#regEmail').val('');
                 $('#regPassword').val('');
                 $('#registerDlg').modal('show');
              });
+
             $('#confirmRegisterBtn').click(function(){
 		            $('#regError').empty();
                 let email = $('#regEmail').val().trim();
@@ -286,7 +307,10 @@
             });
             // run...
             initializeModel();
+
         });
+
         </script>
     </body>
 </html>
+
