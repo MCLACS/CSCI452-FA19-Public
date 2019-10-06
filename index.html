@@ -7,7 +7,7 @@
             /* put your css styles here...*/
             #btnSubmit { height: 38px;}
 	    .snipRow { cursor: pointer; }
-	    #regError, #loginError { color: red;} 
+	    #regError { color: red;} 
         </style>
 	<!--Needed for Syntax Highlighing -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
@@ -24,13 +24,7 @@
             <nav class="navbar navbar-light bg-white">
                 <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
                 <ul class="nav navbar-nav navbar-right">
-                    <li>
-     			<a href="#" id='loginBtn'>Login/Register</a>
-			<span id = "currUser" ></span>
-			<a href="#" id='logoutBtn'>Logout</a>
-		    </li>
-			
-		    
+                    <li><a href="#" id='registerBtn'> Register</a></li>
                 </ul>
             </nav>
 
@@ -124,39 +118,6 @@
             </div>
         </div>
 
-	<!--Modal for logging into your account-->
-        <div id='loginDlg' class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-dark text-light">
-                        <h5 class="modal-title">Login/Register</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <h4>Login</h4>
-                        <form class="border border-primary p-3">
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="loginEmail" name="loginEmail" placeholder="Email">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Password">
-                            </div>
-                        </form>
-                                          <pre id="loginError"></pre>
-					  <a href='#' id='registerBtn'>Do not have an account? Register </a>
-                                 </div>
-
-
-                    <div class="modal-footer">
-                        <button id='confirmLogInBtn' type="button" class="btn btn-primary">Log-In</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <script>
             /* global $ */
             // put your JavaScript code here...
@@ -166,8 +127,6 @@
                 function initializeModel() {
                     model.error = "";
 		    model.regError = "";
-		    model.loginError = "";
-		   //maybe?  model.user = {};
                     model.result = {};
                     model.filter = "";
                     model.category = "SNIP_LANG";
@@ -176,8 +135,6 @@
                     model.langOrder = "DESC";
                     model.creatorOrder = "DESC";
                     model.descOrder = "DESC";
-			
-		//uncomment when function is made    sendRequest("whoIsLoggedIn"); 
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 }
                 // view...
@@ -188,7 +145,6 @@
                     else {
                         //add registration error to modal
 			$("#regError").text(model.regError);
-			$("#loginError").text(model.loginError);
                         
 			// Display proper sorting buttons
                         if (model.langOrder == "DESC") {
@@ -215,18 +171,6 @@
                             $('#btnDescAsc').hide();
                             $('#btnDescDesc').show();
                         }
-			
-			$('#logoutBtn').hide();
-			if(model.result.email != undefined)
-			{
-				$('#currUser').text("Hello, " + model.result.email);
-				$("#loginBtn").hide();
-			}
-			else
-			{
-				$("#loginBtn").show();
-			}
-				
                         // populate list with snippets
                         $('#table_body').empty();
                         for (let i in model.result) {
@@ -256,7 +200,6 @@
                             model.result = json.result;
 			//Adding registration error to model
 			model.regError = json.regError;
-		// maybe?	model.loginError = json.loginError;
                         updateView();
                         if (callback !== undefined)
                             callback();
@@ -330,12 +273,6 @@
                 $('#regEmail').val('');
                 $('#regPassword').val('');
                 $('#registerDlg').modal('show');
-		$('#loginDlg').modal('hide');
-             });
-	     $('#loginBtn').click(function(){
-                $('#loginEmail').val('');
-                $('#loginPassword').val('');
-                $('#loginDlg').modal('show');
              });
             $('#confirmRegisterBtn').click(function(){
 		            $('#regError').empty();
@@ -346,16 +283,6 @@
                         $('#registerDlg').modal('hide');
                     }
 		            });
-            });
-	    $('#confirmLogInBtn').click(function(){
-                            $('#loginError').empty();
-                let email = $('#loginEmail').val().trim();
-                let password = $('#loginPassword').val().trim();
-                sendRequest("Login?email="+email+"&password="+password, function() {
-                                      if (model.loginError == undefined || model.loginError == "") {
-                        $('#loginDlg').modal('hide');
-                    }
-                            });
             });
             // run...
             initializeModel();
