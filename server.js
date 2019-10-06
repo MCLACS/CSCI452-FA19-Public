@@ -21,6 +21,9 @@ const conInfo =
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
 app.all('/register', register);
+app.all('/whoIsLoggedIn', whoIsLoggedIn);
+app.all('/Login', login);
+app.all('/Logout', logout);
 
 function startHandler()
 {
@@ -114,6 +117,61 @@ function getSnippets(req, res)
                         });
                 }
         });
+}
+
+function whoIsLoggedIn(req, res)
+{
+  if (req.session.user == undefined)
+    writeResult(req, res, {'error' : 'Nobody is logged in.'});
+  else
+    writeResult(req, res, req.session.user);
+}
+
+function login(req, res)
+{
+  if (req.query.email == undefined)
+  {
+    writeResult(req, res, {'error' : "Email is required"});
+    return;
+  }
+  if (req.query.password == undefined)
+  {
+    writeResult(req, res, {'error' : "Password is required"});
+    return;
+  }
+  
+  var con = mysql.createConnection(conInfo);
+  con.connect(function(err) 
+  {
+    if (err) 
+      writeResult(res, {'error' : err});
+    else
+    {
+      con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function (err, result, fields) 
+      {
+        if (err) 
+          writeResult(req, res, {'error' : err});
+        else
+        {
+          if(result.length == 1 && bcrypt.compareSync(req.query.password, result[0].ACC_PASSWORD))
+          {
+            req.session.user = {'result' : {'id': result[0].ACC_ID, 'email': result[0].ACC_PASSWORD}};
+            writeResult(req, res, req.session.user);
+          }
+          else 
+          {
+            writeResult(req, res, {'error': "Invalid email/password"});
+          }
+        }
+      });
+    }
+  });
+}
+
+function logout(req, res)
+{
+  req.session.user = undefined;
+  writeResult(req, res, {'error' : 'Nobody is logged in.'});
 }
 
 function validateEmail(email, callback) 
