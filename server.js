@@ -137,12 +137,12 @@ function login(req, res)
 {
   if (req.query.email == undefined)
   {
-    writeResult( res, {'error' : "Email is required"});
+    writeResult( res, {'loginError' : "Email is required"});
     return;
   }
   if (req.query.password == undefined)
   {
-    writeResult( res, {'error' : "Password is required"});
+    writeResult( res, {'loginError' : "Password is required"});
     return;
   }
   
