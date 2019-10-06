@@ -18,6 +18,12 @@ const conInfo =
 	database : process.env.DB_NAME
 }; 
 
+var session = require('express-session'); 
+app.use(session({ secret: 'happy jungle', 
+                  resave: false, 
+                  saveUninitialized: false, 
+                  cookie: { maxAge: 600000 }}))
+
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
 app.all('/register', register);
