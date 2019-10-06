@@ -17,6 +17,7 @@ const conInfo =
 	password : process.env.DB_PASS,
 	database : process.env.DB_NAME
 }; 
+const port = 80;
 
 var session = require('express-session'); 
 app.use(session({ secret: 'happy jungle', 
@@ -128,21 +129,21 @@ function getSnippets(req, res)
 function whoIsLoggedIn(req, res)
 {
   if (req.session.user == undefined)
-    writeResult(req, res, {'error' : 'Nobody is logged in.'});
+    writeResult( res, {'error' : 'Nobody is logged in.'});
   else
-    writeResult(req, res, req.session.user);
+    writeResult( res, req.session.user);
 }
 
 function login(req, res)
 {
   if (req.query.email == undefined)
   {
-    writeResult(req, res, {'error' : "Email is required"});
+    writeResult( res, {'error' : "Email is required"});
     return;
   }
   if (req.query.password == undefined)
   {
-    writeResult(req, res, {'error' : "Password is required"});
+    writeResult( res, {'error' : "Password is required"});
     return;
   }
   
@@ -156,17 +157,17 @@ function login(req, res)
       con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function (err, result, fields) 
       {
         if (err) 
-          writeResult(req, res, {'error' : err});
+          writeResult( res, {'error' : err});
         else
         {
           if(result.length == 1 && bcrypt.compareSync(req.query.password, result[0].ACC_PASSWORD))
           {
             req.session.user = {'result' : {'id': result[0].ACC_ID, 'email': result[0].ACC_PASSWORD}};
-            writeResult(req, res, req.session.user);
+            writeResult( res, req.session.user);
           }
           else 
           {
-            writeResult(req, res, {'error': "Invalid email/password"});
+            writeResult( res, {'error': "Invalid email/password"});
           }
         }
       });
@@ -177,7 +178,7 @@ function login(req, res)
 function logout(req, res)
 {
   req.session.user = undefined;
-  writeResult(req, res, {'error' : 'Nobody is logged in.'});
+  writeResult( res, {'error' : 'Nobody is logged in.'});
 }
 
 function validateEmail(email, callback) 
