@@ -167,7 +167,7 @@ function login(req, res)
           }
           else 
           {
-            writeResult( res, {'error': "Invalid email/password"});
+            writeResult( res, {'loginError': "Invalid email/password"});
           }
         }
       });
