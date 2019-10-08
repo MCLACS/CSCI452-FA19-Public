@@ -94,7 +94,7 @@ function register(req, res)
 
 function getSnippets(req, res)
 {
-        console.log("Now Listing Snippets");
+        //console.log("Now Listing Snippets");
 
         let result = {};
 
@@ -108,7 +108,7 @@ function getSnippets(req, res)
 			console.log([req.query.filter, req.query.category, req.query.order]);
 		 	let filter = "%" +  req.query.filter + "%" ;
 
-			console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
+			//console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
 			
 			con.query('SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE ? OR SNIP_CREATOR LIKE ? OR SNIP_DESC LIKE ? ORDER BY ' + req.query.category + " " + req.query.order, [filter, filter, filter], function(err, result, fields)
                         {
