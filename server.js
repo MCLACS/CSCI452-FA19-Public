@@ -117,7 +117,7 @@ function getSnippets(req, res)
 				            else
 				            {
                                 		writeResult(res, {'result' : result});
-						console.log(result);
+						//console.log(result);
 				            }
 
                         });
