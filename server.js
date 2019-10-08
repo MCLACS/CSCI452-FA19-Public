@@ -130,7 +130,7 @@ function whoIsLoggedIn(req, res)
   if (req.session.user == undefined)
     writeResult( res, {'error' : 'Nobody is logged in.'});
   else
-    writeResult( res, req.session.user);
+    writeResult( res, {'email': req.session.user});
 }
 
 function login(req, res)
