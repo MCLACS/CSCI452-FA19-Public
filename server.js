@@ -162,7 +162,7 @@ function login(req, res)
           if(result.length == 1 && bcrypt.compareSync(req.query.password, result[0].ACC_PASSWORD))
           {
             req.session.user = {'result' : {'id': result[0].ACC_ID, 'email': result[0].ACC_EMAIL}};
-            writeResult( res, req.session.user);
+            writeResult( res, {'email': req.session.user});
           }
           else 
           {
