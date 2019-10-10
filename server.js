@@ -18,9 +18,18 @@ const conInfo =
 	database : process.env.DB_NAME
 }; 
 
+var session = require('express-session'); 
+app.use(session({ secret: 'happy jungle', 
+                  resave: false, 
+                  saveUninitialized: false, 
+                  cookie: { maxAge: 600000 }}))
+
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
 app.all('/register', register);
+app.all('/whoIsLoggedIn', whoIsLoggedIn);
+app.all('/Login', login);
+app.all('/Logout', logout);
 
 function startHandler()
 {
@@ -36,45 +45,56 @@ function writeResult(res, obj)
 
 function register(req, res)
 {
-  if (req.query.email == undefined || !validateEmail(req.query.email))
-  {
-    writeResult(res, {'error' : "Please specify a valid email"});
-  }
 
-  if (req.query.password == undefined || !validatePassword(req.query.password))
+  validateEmail(req.query.email, function(regError)
   {
-    writeResult(res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
-  }
+    if (!regError)
+    {
+      writeResult(res, {'regError' : "Email invalid or already used."});
+    }
 
-  var con = mysql.createConnection(conInfo);
-  con.connect(function(err) 
-  {
-    if (err) 
-      writeResult(res, {'error' : err});
     else
     {
-      let hash = bcrypt.hashSync(req.query.password, 12);
-      con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      {
-        if (err) 
-        {
-            writeResult(res, {'error' : err});
-	    console.log(err);
-        }
-        else
-        {
-          //writeResult(res, {'result' : result});
-	  console.log(result);
-        }
-      });
+	validatePassword(req.query.password, function(regError)
+	{
+            if (!regError)
+            {
+                writeResult(res, {'regError' : "Password must have a minimum of eight characters, at least one letter and one number"});
+            } 
+
+            else
+            {
+                var con = mysql.createConnection(conInfo);
+                con.connect(function(err) 
+  	        {
+    	            if (err) 
+      	                writeResult(res, {'error' : err});
+    	            else
+    	            {
+      		        let hash = bcrypt.hashSync(req.query.password, 12);
+      		        con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
+      		        {
+        		    if (err) 
+        		    {
+            			writeResult(res, {'error' : err});
+	    			console.log(err);
+        		    }
+        		    else
+        		    {
+          			writeResult(res, {'regError' : ""});
+        		    }
+      		        });
+    	            }
+  	        });
+            }
+	});
     }
   });
-  
 }
 
 function getSnippets(req, res)
 {
-        console.log("Now Listing Snippets");
+        //console.log("Now Listing Snippets");
 
         let result = {};
 
@@ -88,7 +108,7 @@ function getSnippets(req, res)
 			console.log([req.query.filter, req.query.category, req.query.order]);
 		 	let filter = "%" +  req.query.filter + "%" ;
 
-			console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
+			//console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
 			
 			con.query('SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE ? OR SNIP_CREATOR LIKE ? OR SNIP_DESC LIKE ? ORDER BY ' + req.query.category + " " + req.query.order, [filter, filter, filter], function(err, result, fields)
                         {
@@ -97,7 +117,7 @@ function getSnippets(req, res)
 				            else
 				            {
                                 		writeResult(res, {'result' : result});
-						console.log(result);
+						//console.log(result);
 				            }
 
                         });
@@ -105,29 +125,113 @@ function getSnippets(req, res)
         });
 }
 
-function validateEmail(email) 
+function whoIsLoggedIn(req, res)
+{
+  if (req.session.user == undefined)
+    writeResult( res, {'error' : 'Nobody is logged in.'});
+  else
+    writeResult( res, {'email': req.session.user});
+}
+
+function login(req, res)
+{
+  if (req.query.email == undefined)
+  {
+    writeResult( res, {'loginError' : "Email is required"});
+    return;
+  }
+  if (req.query.password == undefined)
+  {
+    writeResult( res, {'loginError' : "Password is required"});
+    return;
+  }
+  
+  var con = mysql.createConnection(conInfo);
+  con.connect(function(err) 
+  {
+    if (err) 
+      writeResult(res, {'error' : err});
+    else
+    {
+      con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function (err, result, fields) 
+      {
+        if (err) 
+          writeResult( res, {'error' : err});
+        else
+        {
+          if(result.length == 1 && bcrypt.compareSync(req.query.password, result[0].ACC_PASSWORD))
+          {
+            req.session.user = {'id': result[0].ACC_ID, 'email': result[0].ACC_EMAIL};
+            writeResult( res, {'email': req.session.user});
+          }
+          else 
+          {
+            writeResult( res, {'loginError': "Invalid email/password"});
+          }
+        }
+      });
+    }
+  });
+}
+
+function logout(req, res)
+{
+  req.session.user = undefined;
+  writeResult( res, {'error' : 'Nobody is logged in.'});
+}
+
+function validateEmail(email, callback) 
 {
   if (email == undefined)
   {
-    return false;
+    callback(false);
   }
-  else
+
+  else 
   {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+	var con = mysql.createConnection(conInfo);
+        con.connect(function(err)
+        {
+                if(err)
+                        writeResult(res, {'error' : err});
+                else
+                {
+                     con.query('SELECT COUNT(*) AS total FROM ACCOUNT WHERE ACC_EMAIL=?', [email], function(err, result, fields)
+                     {
+                            if(err)
+                                writeResult(res, {'error' : err});
+                            else
+                            {
+				let eCount = parseInt(JSON.stringify(result[0].total));	
+                                if (eCount > 0)
+				{
+				    callback(false);
+				}
+
+				else
+				{
+				    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				    callback(re.test(String(email).toLowerCase()));
+				} 
+                            }
+
+                     });
+                }
+        });
   }
+ 
 }
 
-function validatePassword(pass)
+function validatePassword(pass, callback)
 {
   if (pass == undefined)
   {
-    return false;
+    callback(false);
   }
   else
   {
     var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return re.test(pass);
+    callback(re.test(pass));
   }
 }
 

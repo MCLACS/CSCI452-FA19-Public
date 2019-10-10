@@ -7,7 +7,7 @@
             /* put your css styles here...*/
             #btnSubmit { height: 38px;}
 	    .snipRow { cursor: pointer; }
-	    #accountError { color: red;} 
+	    #regError, #loginError { color: red;} 
         </style>
 	<!--Needed for Syntax Highlighing -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
@@ -24,7 +24,13 @@
             <nav class="navbar navbar-light bg-white">
                 <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#" id='registerBtn'> Register</a></li>
+                    <li>
+     			<a href="#" id='loginBtn'>Login/Register</a>
+			<span id = "currUser" ></span>
+			<a href="#" id='logoutBtn'>Logout</a>
+		    </li>
+			
+		    
                 </ul>
             </nav>
 
@@ -106,10 +112,45 @@
                                 <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
                             </div>
                         </form>
-	                		<pre id="accountError"></pre>
-		                </div>
+			                  <pre id="regError"></pre>
+		                 </div>
+
+	                		
                     <div class="modal-footer">
                         <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Confirm</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+	<!--Modal for logging into your account-->
+        <div id='loginDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Login/Register</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Login</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="loginEmail" name="loginEmail" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Password">
+                            </div>
+                        </form>
+                                          <pre id="loginError"></pre>
+					  <a href='#' id='registerBtn'>Do not have an account? Register </a>
+                                 </div>
+
+
+                    <div class="modal-footer">
+                        <button id='confirmLogInBtn' type="button" class="btn btn-primary">Log-In</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -124,6 +165,9 @@
                 let model = {};
                 function initializeModel() {
                     model.error = "";
+		    model.regError = "";
+		    model.loginError = "";
+		    model.user = {};
                     model.result = {};
                     model.filter = "";
                     model.category = "SNIP_LANG";
@@ -134,6 +178,8 @@
                     model.creatorOrder = "DESC";
                     model.descOrder = "DESC";
 
+			
+		    sendRequest("whoIsLoggedIn"); 
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 }
 
@@ -143,7 +189,11 @@
                         $("#response").text(model.error);
                     }
                     else {
-                        // Display proper sorting buttons
+                        //add registration error to modal
+			$("#regError").text(model.regError);
+			$("#loginError").text(model.loginError);
+                        
+			// Display proper sorting buttons
                         if (model.langOrder == "DESC") {
                             $('#btnLangAsc').show();
                             $('#btnLangDesc').hide();
@@ -168,7 +218,19 @@
                             $('#btnDescAsc').hide();
                             $('#btnDescDesc').show();
                         }
+			
+			$('#logoutBtn').hide();
 
+			if(model.user.email != undefined)
+			{
+				$('#currUser').text("Hello, " + model.user.email);
+				$("#loginBtn").hide();
+			}
+			else
+			{
+				$("#loginBtn").show();
+			}
+				
                         // populate list with snippets
                         $('#table_body').empty();
                         for (let i in model.result) {
@@ -198,7 +260,15 @@
                     console.log(url);
                     var jqxhr = $.get(url);
                     jqxhr.done(function (json) {
-                        model.result = json.result;
+			if (json.result != undefined)
+                            model.result = json.result;
+			//Adding registration error to model
+			if (json.regError != undefined)
+			    model.regError = json.regError;
+			if (json.email != undefined)
+			    model.user = json.email;
+			if (json.loginError != undefined)
+		 	    model.loginError = json.loginError;
                         updateView();
 
                         if (callback !== undefined)
@@ -269,7 +339,7 @@
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                 });
 
-           $(document).on("click",".snipRow",function() 
+            $(document).on("click",".snipRow",function() 
             {   
 		            let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;		
 		            $('#snippetText').empty();
@@ -281,26 +351,47 @@
              });
 
              $('#registerBtn').click(function(){
+
                 $('#regEmail').val('');
                 $('#regPassword').val('');
                 $('#registerDlg').modal('show');
+		$('#loginDlg').modal('hide');
              });
 
-             $('#confirmRegisterBtn').click(function(){
-		            $('#accountError').empty();
+	     $('#loginBtn').click(function(){
+
+                $('#loginEmail').val('');
+                $('#loginPassword').val('');
+                $('#loginDlg').modal('show');
+             });
+
+            $('#confirmRegisterBtn').click(function(){
+		            $('#regError').empty();
                 let email = $('#regEmail').val().trim();
                 let password = $('#regPassword').val().trim();
-                //sendRequest("register?email="+email+"&password="+password);
-                sendRequest("register?email="+email+"&password="+password);
-		            $('#registerDlg').modal('hide');
+                sendRequest("register?email="+email+"&password="+password, function() {
+			              if (model.regError == undefined || model.regError == "") {
+                        $('#registerDlg').modal('hide');
+                    }
+		            });
+            });
+
+	    $('#confirmLogInBtn').click(function(){
+                            $('#loginError').empty();
+                let email = $('#loginEmail').val().trim();
+                let password = $('#loginPassword').val().trim();
+                sendRequest("Login?email="+email+"&password="+password, function() {
+                                      if (model.loginError == undefined || model.loginError == "") {
+                        $('#loginDlg').modal('hide');
+                    }
+                            });
             });
             // run...
             initializeModel();
 
-            });
+        });
 
         </script>
     </body>
-
 </html>
 
