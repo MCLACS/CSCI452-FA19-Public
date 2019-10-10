@@ -94,7 +94,7 @@ function register(req, res)
 
 function getSnippets(req, res)
 {
-        console.log("Now Listing Snippets");
+        //console.log("Now Listing Snippets");
 
         let result = {};
 
@@ -108,7 +108,7 @@ function getSnippets(req, res)
 			console.log([req.query.filter, req.query.category, req.query.order]);
 		 	let filter = "%" +  req.query.filter + "%" ;
 
-			console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
+			//console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
 			
 			con.query('SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE ? OR SNIP_CREATOR LIKE ? OR SNIP_DESC LIKE ? ORDER BY ' + req.query.category + " " + req.query.order, [filter, filter, filter], function(err, result, fields)
                         {
@@ -117,7 +117,7 @@ function getSnippets(req, res)
 				            else
 				            {
                                 		writeResult(res, {'result' : result});
-						console.log(result);
+						//console.log(result);
 				            }
 
                         });
@@ -130,7 +130,7 @@ function whoIsLoggedIn(req, res)
   if (req.session.user == undefined)
     writeResult( res, {'error' : 'Nobody is logged in.'});
   else
-    writeResult( res, req.session.user);
+    writeResult( res, {'email': req.session.user});
 }
 
 function login(req, res)
@@ -161,8 +161,8 @@ function login(req, res)
         {
           if(result.length == 1 && bcrypt.compareSync(req.query.password, result[0].ACC_PASSWORD))
           {
-            req.session.user = {'result' : {'id': result[0].ACC_ID, 'email': result[0].ACC_EMAIL}};
-            writeResult( res, req.session.user);
+            req.session.user = {'id': result[0].ACC_ID, 'email': result[0].ACC_EMAIL};
+            writeResult( res, {'email': req.session.user});
           }
           else 
           {

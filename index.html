@@ -167,7 +167,7 @@
                     model.error = "";
 		    model.regError = "";
 		    model.loginError = "";
-		   //maybe?  model.user = {};
+		    model.user = {};
                     model.result = {};
                     model.filter = "";
                     model.category = "SNIP_LANG";
@@ -221,9 +221,9 @@
 			
 			$('#logoutBtn').hide();
 
-			if(model.result.email != undefined)
+			if(model.user.email != undefined)
 			{
-				$('#currUser').text("Hello, " + model.result.email);
+				$('#currUser').text("Hello, " + model.user.email);
 				$("#loginBtn").hide();
 			}
 			else
@@ -263,8 +263,12 @@
 			if (json.result != undefined)
                             model.result = json.result;
 			//Adding registration error to model
-			model.regError = json.regError;
-		// maybe?	model.loginError = json.loginError;
+			if (json.regError != undefined)
+			    model.regError = json.regError;
+			if (json.email != undefined)
+			    model.user = json.email;
+			if (json.loginError != undefined)
+		 	    model.loginError = json.loginError;
                         updateView();
 
                         if (callback !== undefined)
