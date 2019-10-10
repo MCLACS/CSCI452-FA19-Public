@@ -266,8 +266,9 @@
 			if (json.regError != undefined)
 			    model.regError = json.regError;
 			if (json.email != undefined)
-			    model.user = json.email;
-		// maybe?	model.loginError = json.loginError;
+			    model.user = json.email;\
+			if (json.loginError != undefined)
+		 	    model.loginError = json.loginError;
                         updateView();
 
                         if (callback !== undefined)
