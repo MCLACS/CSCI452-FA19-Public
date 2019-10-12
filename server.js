@@ -26,6 +26,7 @@ app.use(session({ secret: 'happy jungle',
 
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
+app.all('/getUserQuestions', getUserQuestions);
 app.all('/register', register);
 app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
@@ -123,6 +124,10 @@ function getSnippets(req, res)
                         });
                 }
         });
+}
+
+function getUserQuestions()
+{
 }
 
 function whoIsLoggedIn(req, res)
