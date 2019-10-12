@@ -126,8 +126,26 @@ function getSnippets(req, res)
         });
 }
 
-function getUserQuestions()
+function getUserQuestions(req, res)
 {
+  var con = mysql.createConnection(conInfo);
+  con.connect(function(err) 
+  {
+    if (err) 
+      writeResult(res, {'error' : err});
+    else
+    {
+      con.query("SELECT QUEST_TEXT FROM QUESTION, function (err, result, fields) 
+      {
+        if (err) 
+          writeResult( res, {'error' : err});
+        else
+        {
+	  writeResult( res, {'questions' : result})
+        }
+      });
+    }
+  });
 }
 
 function whoIsLoggedIn(req, res)
