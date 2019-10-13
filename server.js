@@ -74,7 +74,7 @@ function register(req, res)
     	            {
 			if(req.query.A1 == null || req.query.A2 == null)
 			{
-			   writeResult(res, {'regError' : "Answer field cannot be empty"}
+			   writeResult(res, {'regError' : "Answer field cannot be empty"})
 			}
 			else
 		        {
