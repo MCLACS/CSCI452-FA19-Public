@@ -72,19 +72,28 @@ function register(req, res)
       	                writeResult(res, {'error' : err});
     	            else
     	            {
-      		        let hash = bcrypt.hashSync(req.query.password, 12);
-      		        con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      		        {
-        		    if (err) 
-        		    {
-            			writeResult(res, {'error' : err});
-	    			console.log(err);
-        		    }
-        		    else
-        		    {
-          			writeResult(res, {'regError' : ""});
-        		    }
-      		        });
+			if(req.query.A1 == null || req.query.A2 == null)
+			{
+			   writeResult(res, {'regError' : "Answer field cannot be empty"}
+			}
+			else
+		        {
+				let hashPass = bcrypt.hashSync(req.query.password, 12);
+				let hashA1 = bcrypt.hashSync(req.query.A1, 12);
+				let hashA2 = bcrypt.hashSync(req.query.A2, 12);
+				con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD, ACC_QUESTION_ONE, ACC_ANSWER_ONE, ACC_QUESTION_TWO, ACC_ANSWER_TWO) VALUES (?, ?, ?, ?, ?, ?)", [req.query.email, hashPass, req.query.Q1, hashA1, req.query.Q2, hashA2], function (err, result, fields) 
+				{
+				    if (err) 
+				    {
+					writeResult(res, {'error' : err});
+					console.log(err);
+				    }
+				    else
+				    {
+					writeResult(res, {'regError' : ""});
+				    }
+				});
+				}
     	            }
   	        });
             }
