@@ -26,7 +26,7 @@ app.use(session({ secret: 'happy jungle',
 
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
-app.all('/getUserQuestions', getUserQuestions);
+app.all('/getQuestions', getQuestions);
 app.all('/register', register);
 app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
@@ -126,7 +126,7 @@ function getSnippets(req, res)
         });
 }
 
-function getUserQuestions(req, res)
+function getQuestions(req, res)
 {
   var con = mysql.createConnection(conInfo);
   con.connect(function(err) 
