@@ -211,6 +211,7 @@ function changePass(req, res)
 	}
 	else
 	{
+	var con = mysql.createConnection(conInfo);
 	let hashA1 = bcrypt.hashSync(req.query.Answer1, 12);
 	let hashA2 = bcrypt.hashSync(req.query.Answer2, 12);
 	con.query('SELECT ACC_ID FROM ACCOUNT WHERE ACC_ANSWER_ONE = ? AND ACC_ANSWER_TWO = ?',[hashA1, hashA2], function (err, result, fields) 
