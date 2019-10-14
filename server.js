@@ -29,6 +29,7 @@ app.all('/getSnippets', getSnippets);
 app.all('/getQuestions', getQuestions);
 app.all('/getUserQuestions', getUserQuestions);
 app.all('/register', register);
+app.all('/changePass', changePass);
 app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
@@ -191,6 +192,44 @@ function getUserQuestions(req, res)
   else
   {
      writeResult( res, {'error' : "user must be logged in"});
+  }
+}
+
+function changePass()
+{
+  if (req.query.Answer1 == null || req.query.Answer2 == null)
+  {
+    writeResult( res, {'error' : "Answer fields cannot be blank"});
+  }
+  else
+  {
+    validatePassword(req.query.password, function(err)
+    {
+	if(err)
+	{
+	  writeResult( res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
+	}
+	else
+	{
+	con.query('SELECT ACC_ID FROM ACCOUNT WHERE ACC_ANSWER_ONE = ? AND ACC_ANSWER_TWO = ?',[req.query.Answer1, req.query.Answer2], function (err, result, fields) 
+	{
+	if (err) 
+	  writeResult( res, {'error' : err});
+	else
+	{
+	  if(result == null)
+	  {
+	     writeResult( res, {'error' : "Invalid Answers"})
+	  }
+	  else
+	  {
+	     con.query('UPDATE ')
+	  }
+	}
+	});
+	}
+    }
+    );
   }
 }
 
