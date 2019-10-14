@@ -161,7 +161,7 @@ function getQuestions(req, res)
 function getUserQuestions(req, res)
 {
   if(req.session.id = null)
-  var con = mysql.createConnection(conInfo);
+  {var con = mysql.createConnection(conInfo);
   con.connect(function(err) 
   {
     if (err) 
@@ -187,6 +187,7 @@ function getUserQuestions(req, res)
       });
     }
   });
+  }
   else
   {
      writeResult( res, {'error' : "user must be logged in"});
