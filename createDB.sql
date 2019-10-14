@@ -613,6 +613,14 @@ CREATE TABLE QUESTION(
   PRIMARY KEY(QUEST_ID)
 );
 
+INSERT INTO QUESTION (QUEST_TEXT)
+VALUES
+('Name of your first pet'),
+('Digits of your Social Security Number'),
+('Your spouses mothers maiden name'),
+('Your home address'),
+('Your true name');
+
 CREATE TABLE ACCOUNT(
   ACC_ID INT NOT NULL AUTO_INCREMENT,
   ACC_EMAIL VARCHAR(255) UNIQUE NOT NULL,
