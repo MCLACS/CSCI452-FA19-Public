@@ -27,6 +27,7 @@ app.use(session({ secret: 'happy jungle',
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
 app.all('/getQuestions', getQuestions);
+app.all('/getUserQuestions', getUserQuestions);
 app.all('/register', register);
 app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
@@ -151,6 +152,36 @@ function getQuestions(req, res)
         else
         {
 	  writeResult( res, {'questions' : result})
+        }
+      });
+    }
+  });
+}
+
+function getUserQuestions(req, res)
+{
+  var con = mysql.createConnection(conInfo);
+  con.connect(function(err) 
+  {
+    if (err) 
+      writeResult(res, {'error' : err});
+    else
+    {
+      con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT_ID = ' + req.session.user.id, function (err, Q1, fields) 
+      {
+        if (err) 
+          writeResult( res, {'error' : err});
+        else
+        {
+	  con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT_ID = ' + req.session.user.id, function (err, Q2, fields)
+		    {
+		  	if(err)
+			  writeResult( res, {'error' : err});
+		    	else
+			{
+			    writeResult( res, {'Questions' : Q1, Q2})
+		    	}
+	  	    });
         }
       });
     }
