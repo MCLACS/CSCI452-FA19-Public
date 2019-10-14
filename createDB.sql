@@ -632,6 +632,14 @@ CREATE TABLE ACCOUNT(
   PRIMARY KEY(ACC_ID)
 );
 
+INSERT INTO ACCOUNT
+VALUES
+('admin@mcla.edu', 'Password1234', 1, 'Fido', 5, 'weird rune');
+
+INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD, ACC_QUESTION_ONE, ACC_ANSWER_ONE, ACC_QUESTION_TWO, ACC_ANSWER_TWO)
+VALUES
+('admin@mcla.edu', 'Password1234', 1, 'Fido', 5, 'weird rune');
+
 CREATE USER 'sel_user'@'localhost'
   IDENTIFIED BY 'password';
   FLUSH PRIVILEGES;
