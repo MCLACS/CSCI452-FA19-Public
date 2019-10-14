@@ -167,13 +167,13 @@ function getUserQuestions(req, res)
       writeResult(res, {'error' : err});
     else
     {
-      con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT_ID = ' + req.session.user.id, function (err, Q1, fields) 
+      con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + req.session.user.id, function (err, Q1, fields) 
       {
         if (err) 
           writeResult( res, {'error' : err});
         else
         {
-	  con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT_ID = ' + req.session.user.id, function (err, Q2, fields)
+	  con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + req.session.user.id, function (err, Q2, fields)
 		    {
 		  	if(err)
 			  writeResult( res, {'error' : err});
