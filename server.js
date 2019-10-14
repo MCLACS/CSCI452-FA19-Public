@@ -211,7 +211,9 @@ function changePass()
 	}
 	else
 	{
-	con.query('SELECT ACC_ID FROM ACCOUNT WHERE ACC_ANSWER_ONE = ? AND ACC_ANSWER_TWO = ?',[req.query.Answer1, req.query.Answer2], function (err, result, fields) 
+	let hashA1 = bcrypt.hashSync(req.query.Answer1, 12);
+	let hashA2 = bcrypt.hashSync(req.query.Answer2, 12);
+	con.query('SELECT ACC_ID FROM ACCOUNT WHERE ACC_ANSWER_ONE = ? AND ACC_ANSWER_TWO = ?',[hashA1, hashA2], function (err, result, fields) 
 	{
 	if (err) 
 	  writeResult( res, {'error' : err});
@@ -223,7 +225,19 @@ function changePass()
 	  }
 	  else
 	  {
-	     con.query('UPDATE ')
+	     let hashPass = bcrypt.hashSync(req.query.password, 12);
+	     con.query('UPDATE ACCOUNT SET ACC_PASSWORD = ? WHERE ACC_ID = ?',[hashPass, result.ACC_ID], function (err, result, fields)
+	        {
+		     if(err)
+		     {
+			     writeResult( res, {'error' : err})
+		     }
+		     else
+		     {
+		     	     writeResult( res, {'error' : ""})
+		     }
+	     	}
+		);
 	  }
 	}
 	});
