@@ -160,6 +160,7 @@ function getQuestions(req, res)
 
 function getUserQuestions(req, res)
 {
+  if(req.session.id = null)
   var con = mysql.createConnection(conInfo);
   con.connect(function(err) 
   {
@@ -179,13 +180,17 @@ function getUserQuestions(req, res)
 			  writeResult( res, {'error' : err});
 		    	else
 			{
-			    writeResult( res, {'Questions' : Q1, Q2})
+			    writeResult( res, {'Questions' : Q1, Q2});
 		    	}
 	  	    });
         }
       });
     }
   });
+  else
+  {
+     writeResult( res, {'error' : "user must be logged in"});
+  }
 }
 
 function whoIsLoggedIn(req, res)
