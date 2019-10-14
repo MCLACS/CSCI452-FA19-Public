@@ -195,7 +195,7 @@ function getUserQuestions(req, res)
   }
 }
 
-function changePass()
+function changePass(req, res)
 {
   if (req.query.Answer1 == null || req.query.Answer2 == null)
   {
