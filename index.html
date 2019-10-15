@@ -111,6 +111,16 @@
                             <div class="form-group">
                                 <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
                             </div>
+			    <label for="Q1">Security Question 1</label>
+    			    <select class="form-control" id="Q1"></select>
+			    <div class="form-group">
+                                <input type="text" class="form-control" id="A1" name="A1" placeholder="Answer 1">
+                            </div>
+			    <label for="Q2">Security Question 2</label>
+    			    <select class="form-control" id="Q2"></select>
+			    <div class="form-group">
+                                <input type="text" class="form-control" id="A2" name="A2" placeholder="Answer 2">
+                            </div>
                         </form>
 			                  <pre id="regError"></pre>
 		                 </div>
@@ -145,12 +155,46 @@
                             </div>
                         </form>
                                           <pre id="loginError"></pre>
+					  <a href='#' id='changePassBtn'>Forgot your password? Click here you dumb idiot!</a>
 					  <a href='#' id='registerBtn'>Do not have an account? Register </a>
                                  </div>
 
 
                     <div class="modal-footer">
                         <button id='confirmLogInBtn' type="button" class="btn btn-primary">Log-In</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+	<!--Modal for changing user password with secret questions-->
+        <div id='changePassDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Change Password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Login</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="changePassAnswer1" name="changePassAnswer1" placeholder="Answer 1">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="changePassAnswer2" name="changePassAnswer2" placeholder="Answer 2">
+                            </div>
+			    <div class="form-group">
+                                <input type="text" class="form-control" id="changePassEmail" name="changePassEmail" placeholder="Email">
+                            </div>
+                        </form>
+                            <pre id="changePassError"></pre>
+                        </div>
+                    <div class="modal-footer">
+                        <button id='confirmLogInBtn' type="button" class="btn btn-primary">Submit</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -178,10 +222,11 @@
                     model.creatorOrder = "DESC";
                     model.descOrder = "DESC";
 
-			
+
+		    sendRequest("getQuestions");
 		    sendRequest("whoIsLoggedIn"); 
                     sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                }
+		}
 
                 // view...
                 function updateView() {
@@ -252,6 +297,24 @@
 
                             $("#table_body").append(row);
                         }
+			// TODO: if statement to only do this once
+			$('#Q1').empty();
+			$('#Q2').empty();
+			for (let i in model.questions) {
+                            let item = $("<option></option>");
+			    item.attr("value", model.questions[i].QUEST_ID);
+                            item.text(model.questions[i].QUEST_TEXT);
+
+                            $("#Q1").append(item);
+                        }
+			// TODO: what the fuck is this shit
+                        for (let i in model.questions) {
+                            let item = $("<option></option>");
+			    item.attr("value", model.questions[i].QUEST_ID);
+                            item.text(model.questions[i].QUEST_TEXT);
+
+                            $("#Q2").append(item);
+                        } 
                     }
                 }
 
@@ -269,6 +332,8 @@
 			    model.user = json.email;
 			if (json.loginError != undefined)
 		 	    model.loginError = json.loginError;
+			if (json.questions != undefined)
+			    model.questions = json.questions;
                         updateView();
 
                         if (callback !== undefined)
@@ -369,7 +434,11 @@
 		            $('#regError').empty();
                 let email = $('#regEmail').val().trim();
                 let password = $('#regPassword').val().trim();
-                sendRequest("register?email="+email+"&password="+password, function() {
+		let Q1 = $('#Q1').val().trim();
+		let Q2 = $('#Q2').val().trim();
+		let A1 = $('#A1').val().trim();
+		let A2 = $('#A2').val().trim();
+                sendRequest("register?email="+email+"&password="+password+"&Q1="+Q1+"&Q2="+Q2+"&A1="+A1+"&A2="+A2, function() {
 			              if (model.regError == undefined || model.regError == "") {
                         $('#registerDlg').modal('hide');
                     }
