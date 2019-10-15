@@ -26,7 +26,10 @@ app.use(session({ secret: 'happy jungle',
 
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
+app.all('/getQuestions', getQuestions);
+app.all('/getUserQuestions', getUserQuestions);
 app.all('/register', register);
+app.all('/changePass', changePass);
 app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
@@ -71,19 +74,28 @@ function register(req, res)
       	                writeResult(res, {'error' : err});
     	            else
     	            {
-      		        let hash = bcrypt.hashSync(req.query.password, 12);
-      		        con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      		        {
-        		    if (err) 
-        		    {
-            			writeResult(res, {'error' : err});
-	    			console.log(err);
-        		    }
-        		    else
-        		    {
-          			writeResult(res, {'regError' : ""});
-        		    }
-      		        });
+			if(req.query.A1 == null || req.query.A1 == "" || req.query.A2 == null || req.query.A2 == "")
+			{
+			   writeResult(res, {'regError' : "Answer field cannot be empty"})
+			}
+			else
+		        {
+				let hashPass = bcrypt.hashSync(req.query.password, 12);
+				let hashA1 = bcrypt.hashSync(req.query.A1, 12);
+				let hashA2 = bcrypt.hashSync(req.query.A2, 12);
+				con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD, ACC_QUESTION_ONE, ACC_ANSWER_ONE, ACC_QUESTION_TWO, ACC_ANSWER_TWO) VALUES (?, ?, ?, ?, ?, ?)", [req.query.email, hashPass, req.query.Q1, hashA1, req.query.Q2, hashA2], function (err, result, fields) 
+				{
+				    if (err) 
+				    {
+					writeResult(res, {'error' : err});
+					console.log(err);
+				    }
+				    else
+				    {
+					writeResult(res, {'regError' : ""});
+				    }
+				});
+				}
     	            }
   	        });
             }
@@ -123,6 +135,117 @@ function getSnippets(req, res)
                         });
                 }
         });
+}
+
+function getQuestions(req, res)
+{
+  var con = mysql.createConnection(conInfo);
+  con.connect(function(err) 
+  {
+    if (err) 
+      writeResult(res, {'error' : err});
+    else
+    {
+      con.query('SELECT QUEST_TEXT FROM QUESTION', function (err, result, fields) 
+      {
+        if (err) 
+          writeResult( res, {'error' : err});
+        else
+        {
+	  writeResult( res, {'questions' : result})
+        }
+      });
+    }
+  });
+}
+
+function getUserQuestions(req, res)
+{
+  if(req.session.id = null)
+  {var con = mysql.createConnection(conInfo);
+  con.connect(function(err) 
+  {
+    if (err) 
+      writeResult(res, {'error' : err});
+    else
+    {
+      con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + req.session.user.id, function (err, Q1, fields) 
+      {
+        if (err) 
+          writeResult( res, {'error' : err});
+        else
+        {
+	  con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + req.session.user.id, function (err, Q2, fields)
+		    {
+		  	if(err)
+			  writeResult( res, {'error' : err});
+		    	else
+			{
+			    writeResult( res, {'Questions' : Q1, Q2});
+		    	}
+	  	    });
+        }
+      });
+    }
+  });
+  }
+  else
+  {
+     writeResult( res, {'error' : "user must be logged in"});
+  }
+}
+
+function changePass(req, res)
+{
+  if (req.query.Answer1 == null || req.query.Answer2 == null)
+  {
+    writeResult( res, {'error' : "Answer fields cannot be blank"});
+  }
+  else
+  {
+    validatePassword(req.query.password, function(err)
+    {
+	if(err)
+	{
+	  writeResult( res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
+	}
+	else
+	{
+	var con = mysql.createConnection(conInfo);
+	let hashA1 = bcrypt.hashSync(req.query.Answer1, 12);
+	let hashA2 = bcrypt.hashSync(req.query.Answer2, 12);
+	con.query('SELECT ACC_ID FROM ACCOUNT WHERE ACC_ANSWER_ONE = ? AND ACC_ANSWER_TWO = ? AND ACC_EMAIL = ?',[hashA1, hashA2, req.query.email], function (err, result, fields) 
+	{
+	if (err) 
+	  writeResult( res, {'error' : err});
+	else
+	{
+	  if(result == null)
+	  {
+	     writeResult( res, {'error' : "Invalid Answers"})
+	  }
+	  else
+	  {
+	     let hashPass = bcrypt.hashSync(req.query.password, 12);
+	     con.query('UPDATE ACCOUNT SET ACC_PASSWORD = ? WHERE ACC_ID = ?',[hashPass, result.ACC_ID], function (err, result, fields)
+	        {
+		     if(err)
+		     {
+			     writeResult( res, {'error' : err})
+		     }
+		     else
+		     {
+		     	     writeResult( res, {'error' : ""})
+		     }
+	     	}
+		);
+	  }
+	}
+	});
+	}
+    }
+    );
+  }
 }
 
 function whoIsLoggedIn(req, res)
