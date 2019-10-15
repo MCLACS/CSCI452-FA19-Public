@@ -353,7 +353,7 @@ function validatePassword(pass, callback)
   }
   else
   {
-    var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    var re = /^(?=.[ -0-z])(?=.\d)[ -0-z\d]{8,59}$/;
     callback(re.test(pass));
   }
 }
