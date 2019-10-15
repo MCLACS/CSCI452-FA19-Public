@@ -146,7 +146,7 @@ function getQuestions(req, res)
       writeResult(res, {'error' : err});
     else
     {
-      con.query('SELECT QUEST_TEXT FROM QUESTION', function (err, result, fields) 
+      con.query('SELECT * FROM QUESTION', function (err, result, fields) 
       {
         if (err) 
           writeResult( res, {'error' : err});
