@@ -159,12 +159,21 @@ function getQuestions(req, res)
   });
 }
 
+//TODO catch non existing email
+//TODO reverse first if-else statement
 function getUserQuestions(req, res)
 {
   if(req.session.id != null)
-  {var con = mysql.createConnection(conInfo);
-  con.connect(function(err) 
   {
+    if(req.query.email == undefined || req.query.email == "")
+    {
+	writeResult(res, {'loginError' : "Email undefined"});
+	console.log("dumb");
+    }
+    else {
+    var con = mysql.createConnection(conInfo);
+    con.connect(function(err) 
+    {
     if (err) 
       writeResult(res, {'error' : err});
     else
@@ -173,12 +182,6 @@ function getUserQuestions(req, res)
       {
 	if (err)
           writeResult( res, {'error' : err});
-	/* else 
-	{
-      con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, Q1, fields) 
-      {
-        if (err) 
-          writeResult( res, {'error' : err}); */
         else
         {
 	  con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID + ' UNION SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields)
@@ -191,19 +194,18 @@ function getUserQuestions(req, res)
 		    	}
 	  	    });
         }
-      //});
-    //}
   });
   }
   });
+  }
   }
   else
   {
      writeResult( res, {'error' : "user is already logged in"});
   }
-
 }
 
+//TODO modify invalid password error catching
 function changePass(req, res)
 {
   if (req.query.Answer1 == null || req.query.Answer2 == null)
@@ -231,12 +233,13 @@ function changePass(req, res)
 	{
 	  if(result == null)
 	  {
+	     console.log("invalid answers");
 	     writeResult( res, {'error' : "Invalid Answers"})
 	  }
 	  else
 	  {
 	     let hashPass = bcrypt.hashSync(req.query.password, 12);
-	     con.query('UPDATE ACCOUNT SET ACC_PASSWORD = ? WHERE ACC_ID = ?',[hashPass, result[0].ACC_ID], function (err, result, fields)
+	     con.query('UPDATE ACCOUNT SET ACC_PASSWORD = ? WHERE ACC_ID = ' + reslut[0].ACC_ID, [hashPass], function (err, result, fields)
 	        {
 		     if(err)
 		     {
@@ -244,7 +247,8 @@ function changePass(req, res)
 		     }
 		     else
 		     {
-		     	     writeResult( res, {'error' : ""})
+			     console.log("password changed");
+		     	     //writeResult( res, {'error' : ""})
 		     }
 	     	}
 		);

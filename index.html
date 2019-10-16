@@ -156,6 +156,7 @@
                         </form>
                                           <pre id="loginError"></pre>
 					  <a href='#' id='changePassBtn'>Forgot your password? Click here you dumb idiot!</a>
+					  <br/>
 					  <a href='#' id='registerBtn'>Do not have an account? Register </a>
                                  </div>
 
@@ -436,6 +437,7 @@
                 $('#loginDlg').modal('show');
              });
 
+	     //TODO questions flipped
 	     $('#changePassBtn').click(function(){
 		$('#regError').empty();
 		let email = $('#loginEmail').val().trim();
@@ -447,11 +449,12 @@
 			    $('#Question1').text(model.userQuestions[0].QUEST_TEXT);
 			    $('#Question2').text(model.userQuestions[1].QUEST_TEXT);
                 	    $('#changePassDlg').modal('show');
-                            $('#registerDlg').modal('hide');
+                            $('#loginDlg').modal('hide');
                     }
 		});
              });
 
+	     //TODO not actually changing password
 	     $('#confirmChangePassBtn').click(function(){
 		$('#changePassError').empty();
 		let email = $('#loginEmail').val().trim();
@@ -461,7 +464,7 @@
                 sendRequest("changePass?email="+email+"&password="+password+"&Answer1="+Answer1+"&Answer2="+Answer2, function() {
 			if (model.error == undefined || model.error == "") {
                 	    $('#changePassDlg').modal('hide');
-                            //$('#registerDlg').modal('hide');
+                            $('#loginDlg').modal('show');
                     }
 		});
              });
@@ -481,6 +484,7 @@
 		            });
             });
 
+	    //TODO modal not hiding after error
 	    $('#confirmLogInBtn').click(function(){
                             $('#loginError').empty();
                 let email = $('#loginEmail').val().trim();
