@@ -236,7 +236,7 @@ function changePass(req, res)
 	  else
 	  {
 	     let hashPass = bcrypt.hashSync(req.query.password, 12);
-	     con.query('UPDATE ACCOUNT SET ACC_PASSWORD = ? WHERE ACC_ID = ?',[hashPass, result.ACC_ID], function (err, result, fields)
+	     con.query('UPDATE ACCOUNT SET ACC_PASSWORD = ? WHERE ACC_ID = ?',[hashPass, result[0].ACC_ID], function (err, result, fields)
 	        {
 		     if(err)
 		     {
