@@ -181,20 +181,22 @@
                     <div class="modal-body">
                         <h4>Login</h4>
                         <form class="border border-primary p-3">
+			    <label for="Answer1" id="Question1"></label>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="changePassAnswer1" name="changePassAnswer1" placeholder="Answer 1">
+                                <input type="text" class="form-control" id="Answer1" name="Answer1" placeholder="Answer 1">
                             </div>
+			    <label for="Answer2" id="Question2"></label>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="changePassAnswer2" name="changePassAnswer2" placeholder="Answer 2">
+                                <input type="text" class="form-control" id="Answer2" name="Answer2" placeholder="Answer 2">
                             </div>
 			    <div class="form-group">
-                                <input type="text" class="form-control" id="changePassEmail" name="changePassEmail" placeholder="Email">
+                                <input type="password" class="form-control" id="changePassPass" name="changePassPass" placeholder="New Password">
                             </div>
                         </form>
                             <pre id="changePassError"></pre>
                         </div>
                     <div class="modal-footer">
-                        <button id='confirmLogInBtn' type="button" class="btn btn-primary">Submit</button>
+                        <button id='confirmChangePass' type="button" class="btn btn-primary">Submit</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -334,6 +336,8 @@
 		 	    model.loginError = json.loginError;
 			if (json.questions != undefined)
 			    model.questions = json.questions;
+			if (json.userQuestions != undefined)
+			    model.userQuestions = json.userQuestions;
                         updateView();
 
                         if (callback !== undefined)
@@ -419,6 +423,8 @@
 
                 $('#regEmail').val('');
                 $('#regPassword').val('');
+                $('#A1').val('');
+                $('#A2').val('');
                 $('#registerDlg').modal('show');
 		$('#loginDlg').modal('hide');
              });
@@ -428,6 +434,22 @@
                 $('#loginEmail').val('');
                 $('#loginPassword').val('');
                 $('#loginDlg').modal('show');
+             });
+
+	     $('#changePassBtn').click(function(){
+		$('#regError').empty();
+		let email = $('#loginEmail').val().trim();
+                $('#changePassPass').val('');
+                $('#Answer1').val('');
+                $('#Answer2').val('');
+                sendRequest("getUserQuestions?email="+email, function() {
+			if (model.error == undefined || model.error == "") {
+			    $('#Question1').text(model.userQuestions[0].QUEST_TEXT);
+			    $('#Question2').text(model.userQuestions[1].QUEST_TEXT);
+                	    $('#changePassDlg').modal('show');
+                            $('#registerDlg').modal('hide');
+                    }
+		});
              });
 
             $('#confirmRegisterBtn').click(function(){
