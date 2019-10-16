@@ -253,7 +253,8 @@ function changePass(req, res)
              let hashA2 = bcrypt.hashSync(req.query.Answer2, 12);
 	     console.log(hashA1);
 	     console.log(result[0].ACC_ANSWER_ONE);
-	     if (hashA1 == result[0].ACC_ANSWER_ONE && hashA2 == result[0].ACC_ANSWER_TWO)
+       //if (hashA1 == result[0].ACC_ANSWER_ONE && hashA2 == result[0].ACC_ANSWER_TWO)
+       if (bcrypt.compareSync(req.query.Answer1, result[0].ACC_ANSWER_ONE) && bcrypt.compareSync(req.query.Answer2, result[0].ACC_ANSWER_TWO))
 	     {
 	        let hashPass = bcrypt.hashSync(req.query.password, 12);
 	        con.query('UPDATE ACCOUNT SET ACCOUNT.ACC_PASSWORD = ? WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, [hashPass], function (err, result, fields)
