@@ -326,14 +326,15 @@
                     console.log(url);
                     var jqxhr = $.get(url);
                     jqxhr.done(function (json) {
+		// if != undefineds may not be neccesary, was preventing the error messages from disappearing.
 			if (json.result != undefined)
                             model.result = json.result;
 			//Adding registration error to model
-			if (json.regError != undefined)
+		//	if (json.regError != undefined)
 			    model.regError = json.regError;
 			if (json.email != undefined)
 			    model.user = json.email;
-			if (json.loginError != undefined)
+		//	if (json.loginError != undefined)
 		 	    model.loginError = json.loginError;
 			if (json.questions != undefined)
 			    model.questions = json.questions;
@@ -494,6 +495,19 @@
                         $('#loginDlg').modal('hide');
                     }
                             });
+            });
+
+	    //erases error message after a modal is hidden(canceled or closed)
+	    $("#loginDlg").on("hide.bs.modal", function() {
+		$("#loginError").empty();
+	    });
+
+	    $("#registerDlg").on("hide.bs.modal", function() {
+                $("#regError").empty();
+            });
+
+	    $("#changePassDlg").on("hide.bs.modal", function() {
+                $("#changePassError").empty();
             });
             // run...
             initializeModel();
