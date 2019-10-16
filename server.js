@@ -87,7 +87,7 @@ function register(req, res)
                               else 
                               {
                                   req.session.user = {'result' : {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL},'regError' : ""};
-                                  writeResult(res, eq.session.user);
+                                  writeResult(res, req.session.user);
                               }
                           });
                       }
