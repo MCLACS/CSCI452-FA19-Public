@@ -76,18 +76,18 @@ function register(req, res)
                     {
                       if (err) 
                       {
-                          writeResult(req,res,{'error':err});
+                          writeResult(res,{'error':err});
                       }
                       else
                       {
                           con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function(err, result, fields)
                           {
                               if(err)
-                                  writeResult(req,res, {'error' : err});
+                                  writeResult(res, {'error' : err});
                               else 
                               {
-                                  req.session.user = {'result' : {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL}};
-                                  writeResult(req,res,req.session.user);
+                                  req.session.user = {'result' : {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL},'regError' : ""};
+                                  writeResult(req.session.user);
                               }
                           });
                       }
