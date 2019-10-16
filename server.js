@@ -13,7 +13,7 @@ app.listen(process.env.PORT,  process.env.IP, startHandler())
 const conInfo =
 {
 	host : process.env.DB_HOST,
-  	user : process.env.DB_USER,
+  user : process.env.DB_USER,
 	password : process.env.DB_PASS,
 	database : process.env.DB_NAME
 }; 
@@ -71,19 +71,27 @@ function register(req, res)
       	                writeResult(res, {'error' : err});
     	            else
     	            {
-      		        let hash = bcrypt.hashSync(req.query.password, 12);
-      		        con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
-      		        {
-        		    if (err) 
-        		    {
-            			writeResult(res, {'error' : err});
-	    			console.log(err);
-        		    }
-        		    else
-        		    {
-          			writeResult(res, {'regError' : ""});
-        		    }
-      		        });
+      		          let hash = bcrypt.hashSync(req.query.password, 12);
+                    con.query("INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD) VALUES (?, ?)", [req.query.email, hash], function (err, result, fields) 
+                    {
+                      if (err) 
+                      {
+                          writeResult(req,res,{'error':err});
+                      }
+                      else
+                      {
+                          con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function(err, result, fields)
+                          {
+                              if(err)
+                                  writeResult(req,res, {'error' : err});
+                              else 
+                              {
+                                  req.session.user = {'result' : {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL}};
+                                  writeResult(req,res,req.session.user);
+                              }
+                          });
+                      }
+                    });
     	            }
   	        });
             }

@@ -256,31 +256,29 @@
                 }
 
                 // controller...
-                function sendRequest(url, callback) {
+            function sendRequest(url, callback) {
                     console.log(url);
                     var jqxhr = $.get(url);
+
                     jqxhr.done(function (json) {
-			if (json.result != undefined)
+			            if (json.result != undefined)
                             model.result = json.result;
 			//Adding registration error to model
-			if (json.regError != undefined)
-			    model.regError = json.regError;
-			if (json.email != undefined)
-			    model.user = json.email;
-			if (json.loginError != undefined)
-		 	    model.loginError = json.loginError;
-                        updateView();
-
-                        if (callback !== undefined)
+			            if (json.regError != undefined)
+			                model.regError = json.regError;
+			            if (json.email != undefined)
+			                model.user = json.email;
+			            if (json.loginError != undefined)
+		 	                model.loginError = json.loginError;
+                                updateView();
+                        if (callback != undefined)
                             callback();
-
                     })
                     jqxhr.fail(function (json) {
                         let error = JSON.stringify(json);
                         model.error = error;
                         updateView();
                     })
-
                 }
 
                 $('#btnSubmit').click(function () {
