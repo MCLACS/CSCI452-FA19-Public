@@ -206,43 +206,61 @@ function getUserQuestions(req, res)
 }
 
 //TODO modify invalid password error catching
+//TODO catch invalid answers with unique error
 function changePass(req, res)
 {
-  if (req.query.Answer1 == null || req.query.Answer2 == null)
+  console.log("changePass");
+  if (req.query.Answer1 == undefined || req.query.Answer2 == undefined)
   {
+    console.log("changePass init");
     writeResult( res, {'error' : "Answer fields cannot be blank"});
   }
   else
   {
     validatePassword(req.query.password, function(err)
     {
-	if(err)
+	if(!err)
 	{
+	  console.log("password fault");
 	  writeResult( res, {'error' : "Password must have a minimum of eight characters, at least one letter and one number"});
 	}
 	else
 	{
 	var con = mysql.createConnection(conInfo);
-	let hashA1 = bcrypt.hashSync(req.query.Answer1, 12);
-	let hashA2 = bcrypt.hashSync(req.query.Answer2, 12);
-	con.query('SELECT ACC_ID FROM ACCOUNT WHERE ACC_ANSWER_ONE = ? AND ACC_ANSWER_TWO = ? AND ACC_EMAIL = ?',[hashA1, hashA2, req.query.email], function (err, result, fields) 
+//	let hashA1 = bcrypt.hashSync(req.query.Answer1, 12);
+//	let hashA2 = bcrypt.hashSync(req.query.Answer2, 12);
+	console.log("checking answers...");
+	con.query('SELECT ACCOUNT.ACC_ID FROM ACCOUNT WHERE ACCOUNT.ACC_EMAIL = ?',[req.query.email], function (err, id, fields) 
+	//con.query('SELECT ACC_ID FROM ACCOUNT WHERE ACC_ANSWER_ONE = ? AND ACC_ANSWER_TWO = ? AND ACC_EMAIL = ?',[hashA1, hashA2, req.query.email], function (err, id, fields) 
 	{
 	if (err) 
 	  writeResult( res, {'error' : err});
 	else
 	{
-	  if(result == null)
+	  console.log(id);
+	  if(id == null || id[0] == undefined)
 	  {
-	     console.log("invalid answers");
-	     writeResult( res, {'error' : "Invalid Answers"})
+	     console.log("invalid email");
+	     writeResult( res, {'error' : "Invalid Email"})
 	  }
 	  else
 	  {
-	     let hashPass = bcrypt.hashSync(req.query.password, 12);
-	     con.query('UPDATE ACCOUNT SET ACC_PASSWORD = ? WHERE ACC_ID = ' + reslut[0].ACC_ID, [hashPass], function (err, result, fields)
+
+	     con.query('SELECT * FROM ACCOUNT WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields) 
+	     {
+		
+	     let hashA1 = bcrypt.hashSync(req.query.Answer1, 12);
+             let hashA2 = bcrypt.hashSync(req.query.Answer2, 12);
+	     console.log(hashA1);
+	     console.log(result[0].ACC_ANSWER_ONE);
+	     if (hashA1 == result[0].ACC_ANSWER_ONE && hashA2 == result[0].ACC_ANSWER_TWO)
+	     {
+	        let hashPass = bcrypt.hashSync(req.query.password, 12);
+	        con.query('UPDATE ACCOUNT SET ACCOUNT.ACC_PASSWORD = ? WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, [hashPass], function (err, result, fields)
 	        {
 		     if(err)
 		     {
+			     console.log("shit dont work");
 			     writeResult( res, {'error' : err})
 		     }
 		     else
@@ -250,14 +268,15 @@ function changePass(req, res)
 			     console.log("password changed");
 		     	     //writeResult( res, {'error' : ""})
 		     }
-	     	}
-		);
+	     	});
+	     }
+	    else { console.log("invalid answers"); }
+	  });
 	  }
 	}
 	});
 	}
-    }
-    );
+    });
   }
 }
 
