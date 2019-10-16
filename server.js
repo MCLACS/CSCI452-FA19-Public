@@ -161,7 +161,7 @@ function getQuestions(req, res)
 
 function getUserQuestions(req, res)
 {
-  if(req.session.id = null)
+  if(req.session.id != null)
   {var con = mysql.createConnection(conInfo);
   con.connect(function(err) 
   {
@@ -169,30 +169,39 @@ function getUserQuestions(req, res)
       writeResult(res, {'error' : err});
     else
     {
-      con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + req.session.user.id, function (err, Q1, fields) 
+      con.query('SELECT ACCOUNT.ACC_ID FROM ACCOUNT WHERE ACCOUNT.ACC_EMAIL = ?', [req.query.email], function(err, id, fields)
+      {
+	if (err)
+          writeResult( res, {'error' : err});
+	/* else 
+	{
+      con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, Q1, fields) 
       {
         if (err) 
-          writeResult( res, {'error' : err});
+          writeResult( res, {'error' : err}); */
         else
         {
-	  con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + req.session.user.id, function (err, Q2, fields)
+	  con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID + ' UNION SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields)
 		    {
 		  	if(err)
 			  writeResult( res, {'error' : err});
 		    	else
 			{
-			    writeResult( res, {'Questions' : Q1, Q2});
+			    writeResult( res, {'userQuestions' : result});
 		    	}
 	  	    });
         }
-      });
-    }
+      //});
+    //}
+  });
+  }
   });
   }
   else
   {
-     writeResult( res, {'error' : "user must be logged in"});
+     writeResult( res, {'error' : "user is already logged in"});
   }
+
 }
 
 function changePass(req, res)
