@@ -196,7 +196,7 @@
                             <pre id="changePassError"></pre>
                         </div>
                     <div class="modal-footer">
-                        <button id='confirmChangePass' type="button" class="btn btn-primary">Submit</button>
+                        <button id='confirmChangePassBtn' type="button" class="btn btn-primary">Submit</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -448,6 +448,20 @@
 			    $('#Question2').text(model.userQuestions[1].QUEST_TEXT);
                 	    $('#changePassDlg').modal('show');
                             $('#registerDlg').modal('hide');
+                    }
+		});
+             });
+
+	     $('#confirmChangePassBtn').click(function(){
+		$('#changePassError').empty();
+		let email = $('#loginEmail').val().trim();
+                let password= $('#changePassPass').val().trim();
+                let Answer1= $('#Answer1').val().trim();
+                let Answer2= $('#Answer2').val().trim();
+                sendRequest("changePass?email="+email+"&password="+password+"&Answer1="+Answer1+"&Answer2="+Answer2, function() {
+			if (model.error == undefined || model.error == "") {
+                	    $('#changePassDlg').modal('hide');
+                            //$('#registerDlg').modal('hide');
                     }
 		});
              });
