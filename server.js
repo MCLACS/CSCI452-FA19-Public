@@ -174,28 +174,24 @@ function getUserQuestions(req, res) {
 //TODO modify invalid password error catching
 //TODO catch invalid answers with unique error
 function changePass(req, res) {
-  console.log("changePass");
   if (req.query.Answer1 == undefined || req.query.Answer2 == undefined) {
-    console.log("changePass init");
-    writeResult(res, { 'error': "Answer fields cannot be blank" });
+    writeResult(res, { 'changePassError': "Answer fields cannot be blank" });
   }
   else {
     validatePassword(req.query.password, function (err) {
       if (!err) {
         console.log("password fault");
-        writeResult(res, { 'error': "Password must have a minimum of eight characters, at least one letter and one number" });
+        writeResult(res, { 'changePassError': "Password must have a minimum of eight characters, at least one letter and one number" });
       }
       else {
         var con = mysql.createConnection(conInfo);
-        console.log("checking answers...");
         con.query('SELECT ACCOUNT.ACC_ID FROM ACCOUNT WHERE ACCOUNT.ACC_EMAIL = ?', [req.query.email], function (err, id, fields) {
           if (err)
             writeResult(res, { 'error': err });
           else {
-            console.log(id);
             if (id == null || id[0] == undefined) {
               console.log("invalid email");
-              writeResult(res, { 'error': "Invalid Email" })
+              writeResult(res, { 'changePassError': "Invalid Email" })
             }
             else {
               con.query('SELECT * FROM ACCOUNT WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields) {
@@ -203,16 +199,20 @@ function changePass(req, res) {
                   let hashPass = bcrypt.hashSync(req.query.password, 12);
                   con.query('UPDATE ACCOUNT SET ACCOUNT.ACC_PASSWORD = ? WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, [hashPass], function (err, result, fields) {
                     if (err) {
-                      console.log("shit dont work");
-                      writeResult(res, { 'error': err })
+                      console.log("password not changed");
+                      writeResult(res, { 'error': err });
                     }
                     else {
                       console.log("password changed");
-                      //writeResult( res, {'error' : ""})
+                      writeResult( res, {'changePassError' : ""});
                     }
                   });
                 }
-                else { console.log("invalid answers"); }
+                else 
+                { 
+                  console.log("invalid answers"); 
+                  writeResult( res, {'changePassError' : "Invalid Answers"})
+                }
               });
             }
           }

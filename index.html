@@ -270,6 +270,7 @@
                     //add registration error to modal
                     $("#regError").text(model.regError);
                     $("#loginError").text(model.loginError);
+                    $("#changePassError").text(model.changePassError);
 
                     // Display proper sorting buttons
                     if (model.langOrder == "DESC") {
@@ -482,7 +483,6 @@
                 });
             });
 
-            //TODO not actually changing password
             $('#confirmChangePassBtn').click(function () {
                 $('#changePassError').empty();
                 let email = $('#loginEmail').val().trim();
@@ -490,9 +490,12 @@
                 let Answer1 = $('#Answer1').val().trim();
                 let Answer2 = $('#Answer2').val().trim();
                 sendRequest("changePass?email=" + email + "&password=" + password + "&Answer1=" + Answer1 + "&Answer2=" + Answer2, function () {
-                    if (model.error == undefined || model.error == "") {
+                    if ((model.error == undefined || model.error == "") && (model.changePassError == undefined || model.changePassError == "")) {
                         $('#changePassDlg').modal('hide');
                         $('#loginDlg').modal('show');
+                    }
+                    else{
+                        $('#changePassError').text(model.changePassError);
                     }
                 });
             });
@@ -512,7 +515,6 @@
                 });
             });
 
-            //TODO modal not hiding after error
             $('#confirmLogInBtn').click(function () {
                 $('#loginError').empty();
                 let email = $('#loginEmail').val().trim();
