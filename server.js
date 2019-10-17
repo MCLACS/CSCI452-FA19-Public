@@ -140,8 +140,8 @@ function getQuestions(req, res) {
 function getUserQuestions(req, res) {
   if (req.session.id == null) {
     if (req.query.email == undefined || req.query.email == "") {
-      writeResult(res, { 'loginError': "Email undefined" });
-      console.log("dumb");
+      writeResult(res, { 'changePassError': "Email undefined" });
+      console.log("Email empty");
     }
     else {
       var con = mysql.createConnection(conInfo);
@@ -153,13 +153,19 @@ function getUserQuestions(req, res) {
             if (err)
               writeResult(res, { 'error': err });
             else {
-              con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID + ' UNION SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields) {
-                if (err)
-                  writeResult(res, { 'error': err });
-                else {
-                  writeResult(res, { 'userQuestions': result });
-                }
-              });
+              if (id.length == 0) {
+                console.log("No emails found");
+                writeResult(res, { 'changePassError': "Email does not exist" });
+              }
+              else {
+                con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID + ' UNION SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields) {
+                  if (err)
+                    writeResult(res, { 'error': err });
+                  else {
+                    writeResult(res, { 'userQuestions': result , 'changePassError': ""});
+                  }
+                });
+              }
             }
           });
         }

@@ -477,14 +477,14 @@
                 $('#Answer1').val('');
                 $('#Answer2').val('');
                 sendRequest("getUserQuestions?email=" + email, function () {
-                    if ((model.error == undefined || model.error == "") &&(model.loginError == undefined || model.loginError == "")) {
+                    if ((model.error == undefined || model.error == "") &&(model.changePassError == undefined || model.changePassError == "")) {
                         $('#Question1').text(model.userQuestions[0].QUEST_TEXT);
                         $('#Question2').text(model.userQuestions[1].QUEST_TEXT);
                         $('#changePassDlg').modal('show');
                         $('#loginDlg').modal('hide');
                     }
                     else{
-                        $('#loginError').text(model.loginError);
+                        $('#loginError').text(model.changePassError);
                     }
                 });
             });
