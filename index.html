@@ -471,17 +471,20 @@
 
             //TODO questions flipped
             $('#changePassBtn').click(function () {
-                $('#regError').empty();
+                $('#loginError').empty();
                 let email = $('#loginEmail').val().trim();
                 $('#changePassPass').val('');
                 $('#Answer1').val('');
                 $('#Answer2').val('');
                 sendRequest("getUserQuestions?email=" + email, function () {
-                    if (model.error == undefined || model.error == "") {
+                    if ((model.error == undefined || model.error == "") &&(model.loginError == undefined || model.loginError == "")) {
                         $('#Question1').text(model.userQuestions[0].QUEST_TEXT);
                         $('#Question2').text(model.userQuestions[1].QUEST_TEXT);
                         $('#changePassDlg').modal('show');
                         $('#loginDlg').modal('hide');
+                    }
+                    else{
+                        $('#loginError').text(model.loginError);
                     }
                 });
             });
