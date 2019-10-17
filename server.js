@@ -138,7 +138,7 @@ function getQuestions(req, res) {
 //TODO catch non existing email
 //TODO reverse first if-else statement
 function getUserQuestions(req, res) {
-  if (req.session.id == null) {
+  if (req.session.id != null) {
     if (req.query.email == undefined || req.query.email == "") {
       writeResult(res, { 'changePassError': "Email undefined" });
       console.log("Email empty");
