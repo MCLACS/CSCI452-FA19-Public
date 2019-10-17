@@ -59,6 +59,11 @@ function register(req, res) {
           writeResult(res, { 'regError': "Password must have a minimum of eight characters, at least one letter and one number" });
         }
 
+        else if (req.query.Q1 == req.query.Q2)
+        {
+          writeResult(res, { 'regError': "Please choose different questions for your security questions." });
+        }
+
         else {
           var con = mysql.createConnection(conInfo);
           con.connect(function (err) {
