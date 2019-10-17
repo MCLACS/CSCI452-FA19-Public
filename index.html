@@ -16,7 +16,8 @@
         }
 
         #regError,
-        #loginError {
+        #loginError,
+        #changePassError {
             color: red;
         }
     </style>
@@ -244,6 +245,7 @@
                 model.error = "";
                 model.regError = "";
                 model.loginError = "";
+                model.changePassError = "";
                 model.user = {};
                 model.result = {};
                 model.filter = "";
@@ -358,17 +360,18 @@
                     // if != undefineds may not be neccesary, was preventing the error messages from disappearing.
                     if (json.result != undefined)
                         model.result = json.result;
-                    //Adding registration error to model
-                    //	if (json.regError != undefined)
-                    model.regError = json.regError;
+                    if (json.regError != undefined)
+                        model.regError = json.regError;
                     if (json.email != undefined)
                         model.user = json.email;
-                    //	if (json.loginError != undefined)
-                    model.loginError = json.loginError;
+                    if (json.loginError != undefined)
+                        model.loginError = json.loginError;
                     if (json.questions != undefined)
                         model.questions = json.questions;
                     if (json.userQuestions != undefined)
                         model.userQuestions = json.userQuestions;
+                    if (json.changePassError != undefined)
+                        model.changePassError = json.changePassError;
                     updateView();
 
                     if (callback !== undefined)
