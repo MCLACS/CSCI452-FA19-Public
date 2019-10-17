@@ -314,8 +314,10 @@ function validatePassword(pass, callback) {
   if (pass == undefined) {
     callback(false);
   }
-  else {
-    var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+  else
+  {
+    var re = /^([ -!]|[#-&]|[--.]|[0-:]|[a-z]|[<-Z]){8,59}$/;
     callback(re.test(pass));
   }
 }
