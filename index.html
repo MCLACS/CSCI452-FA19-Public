@@ -1,397 +1,556 @@
 ﻿<html>
-    <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-        <meta charset="utf-8">
-        <style>
-            /* put your css styles here...*/
-            #btnSubmit { height: 38px;}
-	    .snipRow { cursor: pointer; }
-	    #regError, #loginError { color: red;} 
-        </style>
-	<!--Needed for Syntax Highlighing -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
-	<script>hljs.initHighlightingOnLoad();</script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/an-old-hope.min.css">
-	
-    </head>
-    <!-- https://www.w3schools.com/icons/icons_reference.asp -->
-    <body>
-        <div class="container">
-            <!--put your html code here...-->
-            <!--<h4>Gitter(tm)(c).gov.org.io</h4>-->
 
-            <nav class="navbar navbar-light bg-white">
-                <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-     			<a href="#" id='loginBtn'>Login/Register</a>
-			<span id = "currUser" ></span>
-			<a href="#" id='logoutBtn'>Logout</a>
-		    </li>
-			
-		    
-                </ul>
-            </nav>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <meta charset="utf-8">
+    <style>
+        /* put your css styles here...*/
+        #btnSubmit {
+            height: 38px;
+        }
+
+        .snipRow {
+            cursor: pointer;
+        }
+
+        #regError,
+        #loginError,
+        #changePassError {
+            color: red;
+        }
+    </style>
+    <!--Needed for Syntax Highlighing -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/an-old-hope.min.css">
+
+</head>
+<!-- https://www.w3schools.com/icons/icons_reference.asp -->
+
+<body>
+    <div class="container">
+        <!--put your html code here...-->
+        <!--<h4>Gitter(tm)(c).gov.org.io</h4>-->
+
+        <nav class="navbar navbar-light bg-white">
+            <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" id='loginBtn'>Login/Register</a>
+                    <span id="currUser"></span>
+                    <a href="#" id='logoutBtn'>Logout</a>
+                </li>
 
 
-            <form class="form-inline search-bar float-right">
-                <input class="form-control" type="text" placeholder="Filter" aria-label="" id='filterTxt'>
-                <button id='btnSubmit' type="button" class="btn btn-default float-left"><span class="fa fa-search" aria-hidden="true"></span></button>
-            </form>
+            </ul>
+        </nav>
 
-            <br>
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">
-                            Language
-                            <button id='btnLangAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
-                            <button id='btnLangDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
-                        </th>
-                        <th scope="col">
-                            Creator
-                            <button id='btnCreatorAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
-                            <button id='btnCreatorDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
-                        </th>
-                        <th scope="col">
-                            Description
-                            <button id='btnDescAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up" aria-hidden="true"></span></button>
-                            <button id='btnDescDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down" aria-hidden="true"></span></button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id='table_body'>
-                </tbody>
-            </table>
-        </div>
+        <form class="form-inline search-bar float-right">
+            <input class="form-control" type="text" placeholder="Filter" aria-label="" id='filterTxt'>
+            <button id='btnSubmit' type="button" class="btn btn-default float-left"><span class="fa fa-search"
+                    aria-hidden="true"></span></button>
+        </form>
 
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
+        <br>
 
-<!--put your modal dialogs here...-->
-        
-	<div id='snippetDlg' class="modal" tabindex="-1" role="dialog">
-          <div class="modal-dialog modal-lg" role="document">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        Language
+                        <button id='btnLangAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up"
+                                aria-hidden="true"></span></button>
+                        <button id='btnLangDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down"
+                                aria-hidden="true"></span></button>
+                    </th>
+                    <th scope="col">
+                        Creator
+                        <button id='btnCreatorAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up"
+                                aria-hidden="true"></span></button>
+                        <button id='btnCreatorDesc' type="button" class="btn btn-default"><span
+                                class="fa fa-chevron-down" aria-hidden="true"></span></button>
+                    </th>
+                    <th scope="col">
+                        Description
+                        <button id='btnDescAsc' type="button" class="btn btn-default"><span class="fa fa-chevron-up"
+                                aria-hidden="true"></span></button>
+                        <button id='btnDescDesc' type="button" class="btn btn-default"><span class="fa fa-chevron-down"
+                                aria-hidden="true"></span></button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id='table_body'>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <!--put your modal dialogs here...-->
+
+    <div id='snippetDlg' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-              <div class="modal-header bg-dark text-light">
-                <h5 id='snippetTitle' class="modal-title">Test</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <pre><code id='snippetText'></code></pre>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
-          </div>
+                <div class="modal-header bg-dark text-light">
+                    <h5 id='snippetTitle' class="modal-title">Test</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <pre><code id='snippetText'></code></pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
-        <!--Modal for account registration-->
-        <div id='registerDlg' class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-dark text-light">
-                        <h5 class="modal-title">Register</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <h4>New Account</h4>
-                        <form class="border border-primary p-3">
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="regEmail" name="regEmail" placeholder="Email">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" id="regPassword" name="regPassword" placeholder="Password">
-                            </div>
-                        </form>
-			                  <pre id="regError"></pre>
-		                 </div>
+    <!--Modal for account registration-->
+    <div id='registerDlg' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title">Register</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>New Account</h4>
+                    <form class="border border-primary p-3">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="regEmail" name="regEmail" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="regPassword" name="regPassword"
+                                placeholder="Password">
+                        </div>
+                        <label for="Q1">Security Question 1</label>
+                        <select class="form-control" id="Q1"></select>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="A1" name="A1" placeholder="Answer 1">
+                        </div>
+                        <label for="Q2">Security Question 2</label>
+                        <select class="form-control" id="Q2"></select>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="A2" name="A2" placeholder="Answer 2">
+                        </div>
+                    </form>
+                    <pre id="regError"></pre>
+                </div>
 
-	                		
-                    <div class="modal-footer">
-                        <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Confirm</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
+
+                <div class="modal-footer">
+                    <button id='confirmRegisterBtn' type="button" class="btn btn-primary">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
+    </div>
 
-	<!--Modal for logging into your account-->
-        <div id='loginDlg' class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-dark text-light">
-                        <h5 class="modal-title">Login/Register</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <h4>Login</h4>
-                        <form class="border border-primary p-3">
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="loginEmail" name="loginEmail" placeholder="Email">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Password">
-                            </div>
-                        </form>
-                                          <pre id="loginError"></pre>
-					  <a href='#' id='registerBtn'>Do not have an account? Register </a>
-                                 </div>
+    <!--Modal for logging into your account-->
+    <div id='loginDlg' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title">Login/Register</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>Login</h4>
+                    <form class="border border-primary p-3">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="loginEmail" name="loginEmail"
+                                placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="loginPassword" name="loginPassword"
+                                placeholder="Password">
+                        </div>
+                    </form>
+                    <pre id="loginError"></pre>
+                    <a href='#' id='changePassBtn'>Forgot your password? Click here you dumb idiot!</a>
+                    <br />
+                    <a href='#' id='registerBtn'>Do not have an account? Register </a>
+                </div>
 
 
-                    <div class="modal-footer">
-                        <button id='confirmLogInBtn' type="button" class="btn btn-primary">Log-In</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
+                <div class="modal-footer">
+                    <button id='confirmLogInBtn' type="button" class="btn btn-primary">Log-In</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            /* global $ */
-            // put your JavaScript code here...
-            $(document).ready(function () {
-                // model...
-                let model = {};
-                function initializeModel() {
-                    model.error = "";
-		    model.regError = "";
-		    model.loginError = "";
-		    model.user = {};
-                    model.result = {};
-                    model.filter = "";
-                    model.category = "SNIP_LANG";
-                    model.order = "DESC";
+    <!--Modal for changing user password with secret questions-->
+    <div id='changePassDlg' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>Login</h4>
+                    <form class="border border-primary p-3">
+                        <label for="Answer1" id="Question1"></label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="Answer1" name="Answer1" placeholder="Answer 1">
+                        </div>
+                        <label for="Answer2" id="Question2"></label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="Answer2" name="Answer2" placeholder="Answer 2">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="changePassPass" name="changePassPass"
+                                placeholder="New Password">
+                        </div>
+                    </form>
+                    <pre id="changePassError"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button id='confirmChangePassBtn' type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    //Button Displays
-                    model.langOrder = "DESC";
-                    model.creatorOrder = "DESC";
-                    model.descOrder = "DESC";
+    <script>
+        /* global $ */
+        // put your JavaScript code here...
+        $(document).ready(function () {
+            // model...
+            let model = {};
+            function initializeModel() {
+                model.error = "";
+                model.regError = "";
+                model.loginError = "";
+                model.changePassError = "";
+                model.user = {};
+                model.result = {};
+                model.filter = "";
+                model.category = "SNIP_LANG";
+                model.order = "DESC";
 
-			
-		    sendRequest("whoIsLoggedIn"); 
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                //Button Displays
+                model.langOrder = "DESC";
+                model.creatorOrder = "DESC";
+                model.descOrder = "DESC";
+
+
+                sendRequest("getQuestions");
+                sendRequest("whoIsLoggedIn");
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            }
+
+            // view...
+            function updateView() {
+                if (model.error != "") {
+                    $("#response").text(model.error);
                 }
+                else {
+                    //add registration error to modal
+                    $("#regError").text(model.regError);
+                    $("#loginError").text(model.loginError);
+                    $("#changePassError").text(model.changePassError);
 
-                // view...
-                function updateView() {
-                    if (model.error != "") {
-                        $("#response").text(model.error);
+                    // Display proper sorting buttons
+                    if (model.langOrder == "DESC") {
+                        $('#btnLangAsc').show();
+                        $('#btnLangDesc').hide();
                     }
                     else {
-                        //add registration error to modal
-			$("#regError").text(model.regError);
-			$("#loginError").text(model.loginError);
-                        
-			// Display proper sorting buttons
-                        if (model.langOrder == "DESC") {
-                            $('#btnLangAsc').show();
-                            $('#btnLangDesc').hide();
-                        }
-                        else {
-                            $('#btnLangAsc').hide();
-                            $('#btnLangDesc').show();
-                        }
-                        if (model.creatorOrder == "DESC") {
-                            $('#btnCreatorAsc').show();
-                            $('#btnCreatorDesc').hide();
-                        }
-                        else {
-                            $('#btnCreatorAsc').hide();
-                            $('#btnCreatorDesc').show();
-                        }
-                        if (model.descOrder == "DESC") {
-                            $('#btnDescAsc').show();
-                            $('#btnDescDesc').hide();
-                        }
-                        else {
-                            $('#btnDescAsc').hide();
-                            $('#btnDescDesc').show();
-                        }
-			
-			$('#logoutBtn').hide();
+                        $('#btnLangAsc').hide();
+                        $('#btnLangDesc').show();
+                    }
+                    if (model.creatorOrder == "DESC") {
+                        $('#btnCreatorAsc').show();
+                        $('#btnCreatorDesc').hide();
+                    }
+                    else {
+                        $('#btnCreatorAsc').hide();
+                        $('#btnCreatorDesc').show();
+                    }
+                    if (model.descOrder == "DESC") {
+                        $('#btnDescAsc').show();
+                        $('#btnDescDesc').hide();
+                    }
+                    else {
+                        $('#btnDescAsc').hide();
+                        $('#btnDescDesc').show();
+                    }
 
-			if(model.user.email != undefined)
-			{
-				$('#currUser').text("Hello, " + model.user.email);
-				$("#loginBtn").hide();
-			}
-			else
-			{
-				$("#loginBtn").show();
-			}
-				
-                        // populate list with snippets
-                        $('#table_body').empty();
-                        for (let i in model.result) {
-                            let row = $("<tr></tr>");
-                            row.attr("id", i);
-                            row.addClass("snipRow");
+                    $('#logoutBtn').hide();
 
-                            let item = $("<td></td>");
-                            item.text(model.result[i].SNIP_LANG);
-                            row.append(item);
-                          
-                            item = $("<td></td>");
-                            item.text(model.result[i].SNIP_CREATOR);
-                            row.append(item);
+                    if (model.user.email != undefined) {
+                        $('#currUser').text("Hello, " + model.user.email);
+                        $("#loginBtn").hide();
+                    }
+                    else {
+                        $("#loginBtn").show();
+                    }
 
-                            item = $("<td></td>");
-                            item.text(model.result[i].SNIP_DESC);
-                            row.append(item);
+                    // populate list with snippets
+                    $('#table_body').empty();
+                    for (let i in model.result) {
+                        let row = $("<tr></tr>");
+                        row.attr("id", i);
+                        row.addClass("snipRow");
 
-                            $("#table_body").append(row);
-                        }
+                        let item = $("<td></td>");
+                        item.text(model.result[i].SNIP_LANG);
+                        row.append(item);
+
+                        item = $("<td></td>");
+                        item.text(model.result[i].SNIP_CREATOR);
+                        row.append(item);
+
+                        item = $("<td></td>");
+                        item.text(model.result[i].SNIP_DESC);
+                        row.append(item);
+
+                        $("#table_body").append(row);
+                    }
+                    // TODO: if statement to only do this once
+                    $('#Q1').empty();
+                    $('#Q2').empty();
+                    for (let i in model.questions) {
+                        let item = $("<option></option>");
+                        item.attr("value", model.questions[i].QUEST_ID);
+                        item.text(model.questions[i].QUEST_TEXT);
+
+                        $("#Q1").append(item);
+                    }
+                    // TODO: what the fuck is this shit
+                    for (let i in model.questions) {
+                        let item = $("<option></option>");
+                        item.attr("value", model.questions[i].QUEST_ID);
+                        item.text(model.questions[i].QUEST_TEXT);
+
+                        $("#Q2").append(item);
                     }
                 }
+            }
 
-                // controller...
-                function sendRequest(url, callback) {
-                    console.log(url);
-                    var jqxhr = $.get(url);
-                    jqxhr.done(function (json) {
-			if (json.result != undefined)
-                            model.result = json.result;
-			//Adding registration error to model
-			if (json.regError != undefined)
-			    model.regError = json.regError;
-			if (json.email != undefined)
-			    model.user = json.email;
-			if (json.loginError != undefined)
-		 	    model.loginError = json.loginError;
-                        updateView();
+            // controller...
+            function sendRequest(url, callback) {
+                console.log(url);
+                var jqxhr = $.get(url);
+                jqxhr.done(function (json) {
+                    // if != undefineds may not be neccesary, was preventing the error messages from disappearing.
+                    if (json.result != undefined)
+                        model.result = json.result;
+                    if (json.regError != undefined)
+                        model.regError = json.regError;
+                    if (json.email != undefined)
+                        model.user = json.email;
+                    if (json.loginError != undefined)
+                        model.loginError = json.loginError;
+                    if (json.questions != undefined)
+                        model.questions = json.questions;
+                    if (json.userQuestions != undefined)
+                        model.userQuestions = json.userQuestions;
+                    if (json.changePassError != undefined)
+                        model.changePassError = json.changePassError;
+                    updateView();
 
-                        if (callback !== undefined)
-                            callback();
+                    if (callback !== undefined)
+                        callback();
 
-                    })
-                    jqxhr.fail(function (json) {
-                        let error = JSON.stringify(json);
-                        model.error = error;
-                        updateView();
-                    })
+                })
+                jqxhr.fail(function (json) {
+                    let error = JSON.stringify(json);
+                    model.error = error;
+                    updateView();
+                })
 
-                }
+            }
 
-                $('#btnSubmit').click(function () {
-                    let str = $('#filterTxt').val().trim();
-                    model.filter = encodeURIComponent(str);
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                });
+            $('#btnSubmit').click(function () {
+                let str = $('#filterTxt').val().trim();
+                model.filter = encodeURIComponent(str);
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            });
 
-                //Order Details
-                $('#btnLangAsc').click(function () {
-                    model.category = "SNIP_LANG";
-                    model.order = "ASC";
-                    model.langOrder = "ASC";
-                    model.creatorOrder = "DESC";
-                    model.descOrder = "DESC";
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                });
+            //Order Details
+            $('#btnLangAsc').click(function () {
+                model.category = "SNIP_LANG";
+                model.order = "ASC";
+                model.langOrder = "ASC";
+                model.creatorOrder = "DESC";
+                model.descOrder = "DESC";
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            });
 
-                $('#btnCreatorAsc').click(function () {
-                    model.category = "SNIP_CREATOR";
-                    model.order = "ASC";
-                    model.creatorOrder = "ASC";
-                    model.langOrder = "DESC";
-                    model.descOrder = "DESC";
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                });
+            $('#btnCreatorAsc').click(function () {
+                model.category = "SNIP_CREATOR";
+                model.order = "ASC";
+                model.creatorOrder = "ASC";
+                model.langOrder = "DESC";
+                model.descOrder = "DESC";
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            });
 
-                $('#btnDescAsc').click(function () {
-                    model.category = "SNIP_DESC";
-                    model.order = "ASC";
-                    model.descOrder = "ASC";
-                    model.langOrder = "DESC";
-                    model.creatorOrder = "DESC";
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            $('#btnDescAsc').click(function () {
+                model.category = "SNIP_DESC";
+                model.order = "ASC";
+                model.descOrder = "ASC";
+                model.langOrder = "DESC";
+                model.creatorOrder = "DESC";
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
 
-                });
+            });
 
-                $('#btnLangDesc').click(function () {
-                    model.category = "SNIP_LANG";
-                    model.order = "DESC";
-                    model.langOrder = "DESC";
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                });
+            $('#btnLangDesc').click(function () {
+                model.category = "SNIP_LANG";
+                model.order = "DESC";
+                model.langOrder = "DESC";
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            });
 
-                $('#btnCreatorDesc').click(function () {
-                    model.category = "SNIP_CREATOR";
-                    model.order = "DESC";
-                    model.creatorOrder = "DESC";
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                });
-                
-                $('#btnDescDesc').click(function () {
-                    model.category = "SNIP_DESC";
-                    model.order = "DESC";
-                    model.descOrder = "DESC";
-                    sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                });
+            $('#btnCreatorDesc').click(function () {
+                model.category = "SNIP_CREATOR";
+                model.order = "DESC";
+                model.creatorOrder = "DESC";
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            });
 
-            $(document).on("click",".snipRow",function() 
-            {   
-		            let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;		
-		            $('#snippetText').empty();
-		            $('#snippetTitle').empty();
-		            //needed for syntax highlighting, also auto escapes html tags.
+            $('#btnDescDesc').click(function () {
+                model.category = "SNIP_DESC";
+                model.order = "DESC";
+                model.descOrder = "DESC";
+                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+            });
+
+            $(document).on("click", ".snipRow", function () {
+                let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;
+                $('#snippetText').empty();
+                $('#snippetTitle').empty();
+                //needed for syntax highlighting, also auto escapes html tags.
                 $('#snippetText').append(hljs.highlightAuto(formatted).value);
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
-             });
+            });
 
-             $('#registerBtn').click(function(){
+            $('#registerBtn').click(function () {
 
                 $('#regEmail').val('');
                 $('#regPassword').val('');
+                $('#A1').val('');
+                $('#A2').val('');
                 $('#registerDlg').modal('show');
-		$('#loginDlg').modal('hide');
-             });
+                $('#loginDlg').modal('hide');
+            });
 
-	     $('#loginBtn').click(function(){
+            $('#loginBtn').click(function () {
 
                 $('#loginEmail').val('');
                 $('#loginPassword').val('');
                 $('#loginDlg').modal('show');
-             });
-
-            $('#confirmRegisterBtn').click(function(){
-		            $('#regError').empty();
-                let email = $('#regEmail').val().trim();
-                let password = $('#regPassword').val().trim();
-                sendRequest("register?email="+email+"&password="+password, function() {
-			              if (model.regError == undefined || model.regError == "") {
-                        $('#registerDlg').modal('hide');
-                    }
-		            });
             });
 
-	    $('#confirmLogInBtn').click(function(){
-                            $('#loginError').empty();
+            //TODO questions flipped
+            $('#changePassBtn').click(function () {
+                $('#loginError').empty();
                 let email = $('#loginEmail').val().trim();
-                let password = $('#loginPassword').val().trim();
-                sendRequest("Login?email="+email+"&password="+password, function() {
-                                      if (model.loginError == undefined || model.loginError == "") {
+                $('#changePassPass').val('');
+                $('#Answer1').val('');
+                $('#Answer2').val('');
+                sendRequest("getUserQuestions?email=" + email, function () {
+                    if ((model.error == undefined || model.error == "") &&(model.changePassError == undefined || model.changePassError == "")) {
+                        $('#Question1').text(model.userQuestions[1].QUEST_TEXT);
+                        $('#Question2').text(model.userQuestions[0].QUEST_TEXT);
+                        $('#changePassDlg').modal('show');
                         $('#loginDlg').modal('hide');
                     }
-                            });
+                    else{
+                        $('#loginError').text(model.changePassError);
+                    }
+                });
+            });
+
+            $('#confirmChangePassBtn').click(function () {
+                $('#changePassError').empty();
+                let email = $('#loginEmail').val().trim();
+                let password = $('#changePassPass').val().trim();
+                let Answer1 = $('#Answer1').val().trim();
+                let Answer2 = $('#Answer2').val().trim();
+                sendRequest("changePass?email=" + email + "&password=" + password + "&Answer1=" + Answer1 + "&Answer2=" + Answer2, function () {
+                    if ((model.error == undefined || model.error == "") && (model.changePassError == undefined || model.changePassError == "")) {
+                        $('#changePassDlg').modal('hide');
+                        $('#loginPassword').val('');
+                        $('#loginDlg').modal('show');
+                    }
+                    else{
+                        $('#changePassError').text(model.changePassError);
+                    }
+                });
+            });
+
+            $('#confirmRegisterBtn').click(function () {
+                $('#regError').empty();
+                let email = $('#regEmail').val().trim();
+                let password = $('#regPassword').val().trim();
+                let Q1 = $('#Q1').val().trim();
+                let Q2 = $('#Q2').val().trim();
+                let A1 = $('#A1').val().trim();
+                let A2 = $('#A2').val().trim();
+                sendRequest("register?email=" + email + "&password=" + password + "&Q1=" + Q1 + "&Q2=" + Q2 + "&A1=" + A1 + "&A2=" + A2, function () {
+                    if (model.regError == undefined || model.regError == "") {
+                        $('#registerDlg').modal('hide');
+                    }
+                });
+            });
+
+            $('#confirmLogInBtn').click(function () {
+                $('#loginError').empty();
+                let email = $('#loginEmail').val().trim();
+                let password = $('#loginPassword').val().trim();
+                sendRequest("Login?email=" + email + "&password=" + password, function () {
+                    if (model.loginError == undefined || model.loginError == "") {
+                        $('#loginDlg').modal('hide');
+                    }
+                });
+            });
+
+            //erases error message after a modal is hidden(canceled or closed)
+            $("#loginDlg").on("hide.bs.modal", function () {
+                $("#loginError").empty();
+            });
+
+            $("#registerDlg").on("hide.bs.modal", function () {
+                $("#regError").empty();
+            });
+
+            $("#changePassDlg").on("hide.bs.modal", function () {
+                $("#changePassError").empty();
             });
             // run...
             initializeModel();
 
         });
 
-        </script>
-    </body>
-</html>
+    </script>
+</body>
 
+</html>
