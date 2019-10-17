@@ -478,8 +478,8 @@
                 $('#Answer2').val('');
                 sendRequest("getUserQuestions?email=" + email, function () {
                     if ((model.error == undefined || model.error == "") &&(model.changePassError == undefined || model.changePassError == "")) {
-                        $('#Question1').text(model.userQuestions[0].QUEST_TEXT);
-                        $('#Question2').text(model.userQuestions[1].QUEST_TEXT);
+                        $('#Question1').text(model.userQuestions[1].QUEST_TEXT);
+                        $('#Question2').text(model.userQuestions[0].QUEST_TEXT);
                         $('#changePassDlg').modal('show');
                         $('#loginDlg').modal('hide');
                     }
@@ -498,6 +498,7 @@
                 sendRequest("changePass?email=" + email + "&password=" + password + "&Answer1=" + Answer1 + "&Answer2=" + Answer2, function () {
                     if ((model.error == undefined || model.error == "") && (model.changePassError == undefined || model.changePassError == "")) {
                         $('#changePassDlg').modal('hide');
+                        $('#loginPassword').empty();
                         $('#loginDlg').modal('show');
                     }
                     else{
