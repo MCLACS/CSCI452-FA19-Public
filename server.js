@@ -215,7 +215,7 @@ function changePass(req, res) {
                     }
                     else {
                       console.log("password changed");
-                      writeResult( res, {'changePassError' : ""});
+                      writeResult( res, {'changePassError' : "", 'loginError': ""});
                     }
                   });
                 }

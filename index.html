@@ -498,7 +498,7 @@
                 sendRequest("changePass?email=" + email + "&password=" + password + "&Answer1=" + Answer1 + "&Answer2=" + Answer2, function () {
                     if ((model.error == undefined || model.error == "") && (model.changePassError == undefined || model.changePassError == "")) {
                         $('#changePassDlg').modal('hide');
-                        $('#loginPassword').empty();
+                        $('#loginPassword').val('');
                         $('#loginDlg').modal('show');
                     }
                     else{
