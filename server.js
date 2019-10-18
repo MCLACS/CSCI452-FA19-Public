@@ -26,6 +26,7 @@ app.use(session({
   cookie: { maxAge: 600000 }
 }))
 
+
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
 app.all('/getQuestions', getQuestions);
@@ -52,7 +53,6 @@ function register(req, res) {
     if (!regError) {
       writeResult(res, { 'regError': "Email invalid or already used." });
     }
-
     else {
       validatePassword(req.query.password, function (regError) {
         if (!regError) {
@@ -83,7 +83,17 @@ function register(req, res) {
                     console.log(err);
                   }
                   else {
-                    writeResult(res, { 'regError': "" });
+                    
+                          con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function(err, result, fields)
+                          {
+                              if(err)
+                                  writeResult(res, {'error' : err});
+                              else 
+                              {
+                                  req.session.user = {'result' : {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL},'regError' : ""};
+                                  writeResult(res, req.session.user);
+                              }
+                          });
                   }
                 });
               }
