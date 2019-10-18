@@ -90,8 +90,8 @@ function register(req, res) {
                                   writeResult(res, {'error' : err});
                               else 
                               {
-                                  req.session.user = {'result' : {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL},'regError' : ""};
-                                  writeResult(res, req.session.user);
+                                  req.session.user = {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL};
+                                  writeResult(res, {'email': req.session.user, 'regError': ""});
                               }
                           });
                   }
