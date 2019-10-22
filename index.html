@@ -357,21 +357,21 @@
                 console.log(url);
                 var jqxhr = $.get(url);
                 jqxhr.done(function (json) {
-                    // if != undefineds may not be neccesary, was preventing the error messages from disappearing.
+                    //If statements necessary because we don't want to delete our data just because it doesn't get returned
                     if (json.result != undefined)
                         model.result = json.result;
-                    //if (json.regError != undefined)
-                        model.regError = json.regError;
                     if (json.email != undefined)
                         model.user = json.email;
-                    //if (json.loginError != undefined)
-                        model.loginError = json.loginError;
                     if (json.questions != undefined)
                         model.questions = json.questions;
                     if (json.userQuestions != undefined)
                         model.userQuestions = json.userQuestions;
-                    if (json.changePassError != undefined)
-                        model.changePassError = json.changePassError;
+                    
+                    //If an error is not returned from server, we don't want to store our old errors
+                    model.regError = json.regError;
+                    model.loginError = json.loginError;
+                    model.changePassError = json.changePassError;
+
                     updateView();
 
                     if (callback !== undefined)
@@ -476,7 +476,6 @@
                 });
             });
 
-            //TODO questions flipped
             $('#changePassBtn').click(function () {
                 $('#loginError').empty();
                 let email = $('#loginEmail').val().trim();
