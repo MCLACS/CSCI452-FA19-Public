@@ -305,9 +305,11 @@
                     if (model.user.email != undefined) {
                         $('#currUser').text("Hello, " + model.user.email);
                         $("#loginBtn").hide();
+                        $("#logoutBtn").show();
                     }
                     else {
                         $("#loginBtn").show();
+                        $("#logoutBtn").hide();
                     }
 
                     // populate list with snippets
@@ -467,6 +469,13 @@
                 $('#loginEmail').val('');
                 $('#loginPassword').val('');
                 $('#loginDlg').modal('show');
+            });
+
+            $('logoutBtn').click(function () {
+                sendrequest("logout", function() {
+                    if(model.error != undefined)
+                        $("logOut").empty();
+                });
             });
 
             //TODO questions flipped
