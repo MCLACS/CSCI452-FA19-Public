@@ -37,16 +37,19 @@ app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
 
+//Notifies the admin what port the server is listening on
 function startHandler() {
-  console.log('Server listening on port ' + process.env.PORT)
+  console.log('Server listening on port ' + process.env.PORT);
 }
 
+//sends results to client
 function writeResult(res, obj) {
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.write(JSON.stringify(obj));
   res.end('');
 }
 
+// Registers a new user and stores their info in database, then logs the user in
 function register(req, res) {
 
   validateEmail(req.query.email, function (regError) {
@@ -73,6 +76,7 @@ function register(req, res) {
               if (req.query.A1 == null || req.query.A1 == "" || req.query.A2 == null || req.query.A2 == "") {
                 writeResult(res, { 'regError': "Answer field cannot be empty" })
               }
+              //Storing the info in the database
               else {
                 let hashPass = bcrypt.hashSync(req.query.password, 12);
                 let hashA1 = bcrypt.hashSync(req.query.A1, 12);
@@ -82,8 +86,8 @@ function register(req, res) {
                     writeResult(res, { 'error': err });
                     console.log(err);
                   }
+                  //Logging the user in
                   else {
-                    
                           con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function(err, result, fields)
                           {
                               if(err)
@@ -105,8 +109,10 @@ function register(req, res) {
   });
 }
 
+//Gets all snippets from DB to populate table with
+//Can take queries for "order" and "filter"
+//req.query.category, req.query.order, req.query.filter
 function getSnippets(req, res) {
-  //console.log("Now Listing Snippets");
 
   let result = {};
 
@@ -116,16 +122,14 @@ function getSnippets(req, res) {
       writeResult(res, { 'error': err });
     else {
       console.log([req.query.filter, req.query.category, req.query.order]);
+      //create filter
       let filter = "%" + req.query.filter + "%";
-
-      //console.log("select * from SNIPPET WHERE SNIP_LANG LIKE " + filter + " ORDER BY " + req.query.category + " " + req.query.order);
-
+      //select snippets with filter, ordering, etc
       con.query('SELECT * FROM SNIPPET WHERE SNIP_LANG LIKE ? OR SNIP_CREATOR LIKE ? OR SNIP_DESC LIKE ? ORDER BY ' + req.query.category + " " + req.query.order, [filter, filter, filter], function (err, result, fields) {
         if (err)
           writeResult(res, { 'error': err });
         else {
           writeResult(res, { 'result': result });
-          //console.log(result);
         }
 
       });
@@ -133,6 +137,7 @@ function getSnippets(req, res) {
   });
 }
 
+//Returns all security questions from DB to populate dropdown menu in register modal
 function getQuestions(req, res) {
   var con = mysql.createConnection(conInfo);
   con.connect(function (err) {
@@ -150,8 +155,9 @@ function getQuestions(req, res) {
   });
 }
 
-//TODO catch non existing email
-//TODO reverse first if-else statement
+//Gets user's security questions for change password modal
+//Requires user Email
+//req.query.email 
 function getUserQuestions(req, res) {
   if (req.session.id != null) {
     if (req.query.email == undefined || req.query.email == "") {
@@ -164,6 +170,7 @@ function getUserQuestions(req, res) {
         if (err)
           writeResult(res, { 'error': err });
         else {
+          //get account id, used later to find user's questions
           con.query('SELECT ACCOUNT.ACC_ID FROM ACCOUNT WHERE ACCOUNT.ACC_EMAIL = ?', [req.query.email], function (err, id, fields) {
             if (err)
               writeResult(res, { 'error': err });
@@ -173,6 +180,7 @@ function getUserQuestions(req, res) {
                 writeResult(res, { 'changePassError': "Email does not exist" });
               }
               else {
+                //use account id to get user's questions
                 con.query('SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_TWO = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID + ' UNION SELECT QUESTION.QUEST_TEXT FROM ACCOUNT INNER JOIN QUESTION ON ACCOUNT.ACC_QUESTION_ONE = QUEST_ID WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields) {
                   if (err)
                     writeResult(res, { 'error': err });
@@ -192,8 +200,9 @@ function getUserQuestions(req, res) {
   }
 }
 
-//TODO modify invalid password error catching
-//TODO catch invalid answers with unique error
+//Checks if security answers are correct, if new password is valid. Changes User's password if both conditions are met
+//Takes Email, new Password, Security Answer 1, Security Answer 2
+//req.query.email, req.query.password, req.query.Answer1, req.query.Answer2
 function changePass(req, res) {
   if (req.query.Answer1 == undefined || req.query.Answer2 == undefined) {
     writeResult(res, { 'changePassError': "Answer fields cannot be blank" });
@@ -206,6 +215,7 @@ function changePass(req, res) {
       }
       else {
         var con = mysql.createConnection(conInfo);
+        //Get account id by their email
         con.query('SELECT ACCOUNT.ACC_ID FROM ACCOUNT WHERE ACCOUNT.ACC_EMAIL = ?', [req.query.email], function (err, id, fields) {
           if (err)
             writeResult(res, { 'error': err });
@@ -215,7 +225,9 @@ function changePass(req, res) {
               writeResult(res, { 'changePassError': "Invalid Email" })
             }
             else {
+              //Get user's account info from their account ID
               con.query('SELECT * FROM ACCOUNT WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, function (err, result, fields) {
+                //check that security question answers are correct, changes password if they are
                 if (bcrypt.compareSync(req.query.Answer1, result[0].ACC_ANSWER_ONE) && bcrypt.compareSync(req.query.Answer2, result[0].ACC_ANSWER_TWO)) {
                   let hashPass = bcrypt.hashSync(req.query.password, 12);
                   con.query('UPDATE ACCOUNT SET ACCOUNT.ACC_PASSWORD = ? WHERE ACCOUNT.ACC_ID = ' + id[0].ACC_ID, [hashPass], function (err, result, fields) {
@@ -243,6 +255,7 @@ function changePass(req, res) {
   }
 }
 
+//Returns the information stored in session for logged in user
 function whoIsLoggedIn(req, res) {
   if (req.session.user == undefined)
     writeResult(res, { 'error': 'Nobody is logged in.' });
@@ -250,6 +263,9 @@ function whoIsLoggedIn(req, res) {
     writeResult(res, { 'email': req.session.user });
 }
 
+//Logs the user in if email and password are correct
+//Requires email, password
+//req.query.email, req.query.password
 function login(req, res) {
   if (req.query.email == undefined) {
     writeResult(res, { 'loginError': "Email is required" });
@@ -265,10 +281,12 @@ function login(req, res) {
     if (err)
       writeResult(res, { 'error': err });
     else {
+      //Get account info
       con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function (err, result, fields) {
         if (err)
           writeResult(res, { 'error': err });
         else {
+          //Log in the user if the entered password is the same as the stored password
           if (result.length == 1 && bcrypt.compareSync(req.query.password, result[0].ACC_PASSWORD)) {
             req.session.user = { 'id': result[0].ACC_ID, 'email': result[0].ACC_EMAIL };
             writeResult(res, { 'email': req.session.user });
@@ -282,11 +300,15 @@ function login(req, res) {
   });
 }
 
+//Clears Sesssion storage
 function logout(req, res) {
   req.session.user = undefined;
   writeResult(res, { 'error': 'Nobody is logged in.' });
 }
 
+//Checks if an email is useable
+//Requires email
+//req.query.email
 function validateEmail(email, callback) {
   if (email == undefined) {
     callback(false);
@@ -298,6 +320,7 @@ function validateEmail(email, callback) {
       if (err)
         writeResult(res, { 'error': err });
       else {
+        //check if email is already present in the database before other functions try to store the email
         con.query('SELECT COUNT(*) AS total FROM ACCOUNT WHERE ACC_EMAIL=?', [email], function (err, result, fields) {
           if (err)
             writeResult(res, { 'error': err });
@@ -308,6 +331,7 @@ function validateEmail(email, callback) {
             }
 
             else {
+              //Prevent bobby droptables
               var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
               callback(re.test(String(email).toLowerCase()));
             }
@@ -320,6 +344,9 @@ function validateEmail(email, callback) {
 
 }
 
+//Checks to make sure password does not break sql
+//Requires password
+//req.query.password
 function validatePassword(pass, callback) {
   if (pass == undefined) {
     callback(false);
@@ -332,6 +359,7 @@ function validatePassword(pass, callback) {
   }
 }
 
+//"Start Program" by reading index.html
 function serveIndex(req, res) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
   var index = fs.readFileSync('index.html');
