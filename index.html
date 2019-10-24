@@ -306,6 +306,7 @@
                         $("#logoutBtn").show();
                     }
                     else {
+                        $('#currUser').text("");
                         $("#loginBtn").show();
                         $("#logoutBtn").hide();
                     }
@@ -362,6 +363,8 @@
                         model.result = json.result;
                     if (json.email != undefined)
                         model.user = json.email;
+                    if (json.error == 'Nobody is logged in.')
+                        model.user = {};
                     if (json.questions != undefined)
                         model.questions = json.questions;
                     if (json.userQuestions != undefined)
@@ -470,9 +473,12 @@
             });
 
             $('#logoutBtn').click(function () {
-                sendrequest("Logout", function() {
-                    if(model.error != undefined)
+                sendRequest("Logout", function() {
+                    if(model.error == "Nobody is logged in.")
+                    {
                         $("logOut").empty();
+                    }
+                        
                 });
             });
 

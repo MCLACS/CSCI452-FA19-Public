@@ -303,7 +303,7 @@ function login(req, res) {
 //Clears Sesssion storage
 function logout(req, res) {
   req.session.user = undefined;
-  writeResult(res, { 'error': 'Nobody is logged in.' });
+  writeResult(res, { 'error': 'Nobody is logged in.' , 'email': ''});
 }
 
 //Checks if an email is useable
