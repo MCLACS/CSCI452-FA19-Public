@@ -469,8 +469,8 @@
                 $('#loginDlg').modal('show');
             });
 
-            $('logoutBtn').click(function () {
-                sendrequest("logout", function() {
+            $('#logoutBtn').click(function () {
+                sendrequest("Logout", function() {
                     if(model.error != undefined)
                         $("logOut").empty();
                 });
