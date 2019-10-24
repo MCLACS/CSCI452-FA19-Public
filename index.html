@@ -363,7 +363,7 @@
                     if (json.email != undefined)
                         model.user = json.email;
                     if (json.error == 'Nobody is logged in.')
-                        model.user = '';
+                        model.user = {};
                     if (json.questions != undefined)
                         model.questions = json.questions;
                     if (json.userQuestions != undefined)
