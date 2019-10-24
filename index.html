@@ -360,8 +360,10 @@
                     //If statements necessary because we don't want to delete our data just because it doesn't get returned
                     if (json.result != undefined)
                         model.result = json.result;
-                    if (json.email != undefined && json.error != 'Nobody is logged in.')
+                    if (json.email != undefined)
                         model.user = json.email;
+                    if (json.error == 'Nobody is logged in.')
+                        model.user = '';
                     if (json.questions != undefined)
                         model.questions = json.questions;
                     if (json.userQuestions != undefined)
