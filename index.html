@@ -470,9 +470,14 @@
             });
 
             $('#logoutBtn').click(function () {
-                sendrequest("Logout", function() {
-                    if(model.error != undefined)
+                sendRequest("Logout", function() {
+                    if(model.error == "Nobody is logged in.")
+                    {
                         $("logOut").empty();
+                        model.email = "";
+                        model.error = "";
+                    }
+                        
                 });
             });
 
