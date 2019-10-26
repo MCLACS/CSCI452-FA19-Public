@@ -359,6 +359,46 @@ function validatePassword(pass, callback) {
   }
 }
 
+function insertSnippet() {
+	//if req.query.email is not defined throw error
+	if (req.query.email == undefined) 
+            writeResult(res, { 'insertError': "Email not defined"});
+	else 
+	{
+		//check if req.query.desc is valid for snip_desc
+		if (req.query.desc == undefined)
+			writeResult(res, { 'insertError': "Description not defined"});
+		else
+		{
+			//check if req.query.language is valid for snip_snippet
+                	if (req.query.language == undefined)
+                        	writeResult(res, { 'insertError': "Language not defined"});
+			else
+			{
+				//check if req.query.snippet is valid for snip_snippet
+                		if (req.query.snippet == undefined)
+                        		writeResult(res, { 'insertError': "Snippet not defined"});
+				else
+				{
+					var con = mysql.createConnection(conInfo);
+          				con.connect(function (err) {
+           	 				if (err)
+              						writeResult(res, { 'error': err });
+              					//Storing the info in the database
+              					else {
+                					con.query("INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET) VALUES (?, ?, ?, ?)", [req.query.email, req.query.language, req.query.desc, req.query.snippet], function (err, result, fields) {
+                  						if (err)
+									writeResult(res, { 'error': err });
+
+							});
+						}
+					});	
+				}
+			}
+		}	
+	}
+}
+
 //"Start Program" by reading index.html
 function serveIndex(req, res) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
