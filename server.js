@@ -362,36 +362,36 @@ function validatePassword(pass, callback) {
 function insertSnippet() {
 	//if req.query.email is not defined throw error
 	if (req.query.email == undefined) 
-            writeResult(res, { 'insertError': "Email not defined"});
+            writeResult(res, { 'insertError': "Email invalid"});
 	else 
 	{
 		//check if req.query.desc is valid for snip_desc
-		if (req.query.desc == undefined)
-			writeResult(res, { 'insertError': "Description not defined"});
+		if (req.query.desc == undefined || req.query.desc.length > 255)
+			writeResult(res, { 'insertError': "Description invalid"});
 		else
 		{
 			//check if req.query.language is valid for snip_snippet
-                	if (req.query.language == undefined)
-                        	writeResult(res, { 'insertError': "Language not defined"});
+                	if (req.query.lang == undefined || req.query.lang.length > 4294967295)
+                        	writeResult(res, { 'insertError': "Language invalid"});
 			else
 			{
 				//check if req.query.snippet is valid for snip_snippet
-                		if (req.query.snippet == undefined)
-                        		writeResult(res, { 'insertError': "Snippet not defined"});
+                		if (req.query.snippet == undefined || req.query.snippet.length > 4294967295)
+                        		writeResult(res, { 'insertError': "Snippet invalid"});
 				else
 				{
 					var con = mysql.createConnection(conInfo);
           				con.connect(function (err) {
            	 				if (err)
               						writeResult(res, { 'error': err });
-              					//Storing the info in the database
-              					else {
-                					con.query("INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET) VALUES (?, ?, ?, ?)", [req.query.email, req.query.language, req.query.desc, req.query.snippet], function (err, result, fields) {
+              
+						else {
+                					con.query("INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET) VALUES (?, ?, ?, ?)", [req.query.email, req.query.lang, req.query.desc, req.query.snippet], function (err, result, fields) {
                   						if (err)
 									writeResult(res, { 'error': err });
-
 							});
 						}
+
 					});	
 				}
 			}
