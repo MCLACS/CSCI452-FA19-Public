@@ -36,6 +36,7 @@ app.all('/changePass', changePass);
 app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
+app.all('/insertSnippet', insertSnippet);
 
 //Notifies the admin what port the server is listening on
 function startHandler() {
@@ -359,7 +360,7 @@ function validatePassword(pass, callback) {
   }
 }
 
-function insertSnippet() {
+function insertSnippet(req, res) {
 	//if req.query.email is not defined throw error
 	if (req.query.email == undefined) 
             writeResult(res, { 'insertError': "Email invalid"});
