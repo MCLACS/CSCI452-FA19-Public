@@ -278,6 +278,7 @@
                 model.regError = "";
                 model.loginError = "";
                 model.changePassError = "";
+                model.insertError = "";
                 model.user = {};
                 model.result = {};
                 model.filter = "";
@@ -408,6 +409,7 @@
                     model.regError = json.regError;
                     model.loginError = json.loginError;
                     model.changePassError = json.changePassError;
+                    model.insertError = json.insertError;
 
                     updateView();
 
@@ -593,7 +595,7 @@
                 let snippet = $('#codeInsert').val().trim();
                 sendRequest("insertSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
                 {
-                    if(model.error == undefined){
+                    if(model.insertError == undefined || model.insertError == "" ){
                         sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                         $('#insertSnippetDlg').modal('hide');
                     }
