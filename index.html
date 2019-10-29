@@ -40,6 +40,7 @@
             <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
             <ul class="nav navbar-nav navbar-right">
                 <li>
+                    <a href ="#" id = 'snippetBtn'>Add Code Snippet</a>
                     <a href="#" id='loginBtn'>Login/Register</a>
                     <span id="currUser"></span>
                     <a href="#" id='logoutBtn'>Logout</a>
@@ -234,6 +235,37 @@
             </div>
         </div>
     </div>
+    <!--Modal to add a snippet to the database-->
+    <div id='snippetDlg' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title">Snippet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>Add A Snippet</h4>
+                    <form class="border border-primary p-3">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="langInsert" name="langInsert" placeholder="Language">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="descInsert" name="descInsert" placeholder="Description">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="codeInsert" name="codeInsert" placeholder="Code">
+                        </div>                        
+                    </form> 
+                </div>
+                <div class="modal-footer">
+                    <button id='submitSnippetBtn' type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>     
 
     <script>
         /* global $ */
@@ -302,11 +334,13 @@
 
                     if (model.user.email != undefined) {
                         $('#currUser').text("Hello, " + model.user.email);
+                        $("#snippetBtn").show();
                         $("#loginBtn").hide();
                         $("#logoutBtn").show();
                     }
                     else {
                         $('#currUser').text("");
+                        $("#snippetBtn").hide(); 
                         $("#loginBtn").show();
                         $("#logoutBtn").hide();
                     }
@@ -543,6 +577,26 @@
                         $('#loginDlg').modal('hide');
                     }
                 });
+            });
+
+            $('#snippetBtn').click(function(){
+                $('#langInsert').val('');
+                $('#descInsert').val('');
+                $('#codeInsert').val('');
+                $('#snippetDlg').modal('show');
+            });
+
+            $('#submitSnippetBtn').click(function()
+            {
+                let lang = $('#langInster').val().trim();
+                let desc = $('#descInsert').val().trim();
+                let code = $('#codeInsert').val().trim();
+                sendRequest("insertSnippet?language="+lang+"&description="+desc+"&code="+code, function()
+                {
+                    if(model.error == undefined)
+                        sendRequest("getSnippets");
+                });
+                $('#snippetDlg').modal('hide');
             });
 
             //erases error message after a modal is hidden(canceled or closed)
