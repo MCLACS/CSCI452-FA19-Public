@@ -590,8 +590,8 @@
             {
                 let lang = $('#langInster').val().trim();
                 let desc = $('#descInsert').val().trim();
-                let code = $('#codeInsert').val().trim();
-                sendRequest("insertSnippet?language="+lang+"&description="+desc+"&code="+code, function()
+                let snippet = $('#codeInsert').val().trim();
+                sendRequest("insertSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
                 {
                     if(model.error == undefined)
                         sendRequest("getSnippets");
