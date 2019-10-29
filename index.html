@@ -588,7 +588,7 @@
 
             $('#submitSnippetBtn').click(function()
             {
-                let lang = $('#langInster').val().trim();
+                let lang = $('#langInsert').val().trim();
                 let desc = $('#descInsert').val().trim();
                 let snippet = $('#codeInsert').val().trim();
                 sendRequest("insertSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
