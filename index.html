@@ -236,7 +236,7 @@
         </div>
     </div>
     <!--Modal to add a snippet to the database-->
-    <div id='snippetDlg' class="modal" tabindex="-1" role="dialog">
+    <div id='insertSnippetDlg' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-light">
@@ -596,7 +596,7 @@
                     if(model.error == undefined)
                         sendRequest("getSnippets");
                 });
-                $('#snippetDlg').modal('hide');
+                $('#insertSnippetDlg').modal('hide');
             });
 
             //erases error message after a modal is hidden(canceled or closed)
