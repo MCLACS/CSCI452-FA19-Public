@@ -389,7 +389,9 @@ function insertSnippet(req, res) {
 						else {
                 					con.query("INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET) VALUES (?, ?, ?, ?)", [req.query.email, req.query.lang, req.query.desc, req.query.snippet], function (err, result, fields) {
                   						if (err)
-									writeResult(res, { 'error': err });
+                                writeResult(res, { 'error': err });
+                              else
+                              writeResult(res, { 'insertError': "", 'error': ""});
 							});
 						}
 
