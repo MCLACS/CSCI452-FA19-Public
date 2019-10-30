@@ -250,13 +250,16 @@
                     <h4>Add A Snippet</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
+                            <label for = "langInsert">Language:</label>
                             <input type="text" class="form-control" id="langInsert" name="langInsert" placeholder="Language">
                         </div>
                         <div class="form-group">
+                            <label for = "descInsert">Description:</label>
                             <input type="text" class="form-control" id="descInsert" name="descInsert" placeholder="Description">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="codeInsert" name="codeInsert" placeholder="Code">
+                            <label for = "codeInsert">Code:</label>
+                            <textarea class="form-control" rows = "10" id="codeInsert" name="codeInsert" placeholder="Code"></textarea>
                         </div>                        
                     </form> 
                     <pre id = "insertError"></pre>
@@ -607,6 +610,21 @@
                     }
                 });
             });
+            
+            //Captures the tab key when using it in a text area, has it function as a "tab" key when typing, not shifting focus to next line
+            $("textarea").keydown(function(e){
+                if(e.keyCode === 9){
+                    let start = this.selectionStart;
+                    let end = this.selectionEnd;
+                    let $this = $(this);
+                    let value = $this.val();
+
+                    $this.val(value.substring(0, start) + "\t" + value.substring(end));
+                    this.selectionStart = this.selectionEnd = start + 1;
+
+                    e.preventDefault();
+                }
+            });            
 
             //erases error message after a modal is hidden(canceled or closed)
             $("#insertSnippetDlg").on("hide.bs.modal", function() {
