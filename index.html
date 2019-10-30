@@ -262,6 +262,7 @@
                             <textarea class="form-control" rows = "10" id="codeInsert" name="codeInsert" placeholder="Code"></textarea>
                         </div>                        
                     </form> 
+                    <pre id = "insertError"></pre>
                 </div>
                 <div class="modal-footer">
                     <button id='submitSnippetBtn' type="button" class="btn btn-primary">Submit</button>
@@ -610,6 +611,7 @@
                 });
             });
             
+            //Captures the tab key when using it in a text area, has it function as a "tab" key when typing, not shifting focus to next line
             $("textarea").keydown(function(e){
                 if(e.keyCode === 9){
                     let start = this.selectionStart;

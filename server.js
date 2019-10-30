@@ -36,6 +36,7 @@ app.all('/changePass', changePass);
 app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
+app.all('/insertSnippet', insertSnippet);
 
 //Notifies the admin what port the server is listening on
 function startHandler() {
@@ -357,6 +358,48 @@ function validatePassword(pass, callback) {
     var re = /^([ -!]|[#-&]|[--.]|[0-:]|[a-z]|[<-Z]){8,59}$/;
     callback(re.test(pass));
   }
+}
+
+function insertSnippet(req, res) {
+	//if req.query.email is not defined throw error
+	if (req.query.email == undefined) 
+            writeResult(res, { 'insertError': "Email invalid"});
+	else 
+	{
+		//check if req.query.desc is valid for snip_desc
+		if (req.query.desc == undefined || req.query.desc.length > 255)
+			writeResult(res, { 'insertError': "Description invalid"});
+		else
+		{
+			//check if req.query.language is valid for snip_snippet
+                	if (req.query.lang == undefined || req.query.lang.length > 4294967295)
+                        	writeResult(res, { 'insertError': "Language invalid"});
+			else
+			{
+				//check if req.query.snippet is valid for snip_snippet
+                		if (req.query.snippet == undefined || req.query.snippet.length > 4294967295)
+                        		writeResult(res, { 'insertError': "Snippet invalid"});
+				else
+				{
+					var con = mysql.createConnection(conInfo);
+          				con.connect(function (err) {
+           	 				if (err)
+              						writeResult(res, { 'error': err });
+              
+						else {
+                					con.query("INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET) VALUES (?, ?, ?, ?)", [req.query.email, req.query.lang, req.query.desc, req.query.snippet], function (err, result, fields) {
+                  						if (err)
+                                writeResult(res, { 'error': err });
+                              else
+                              writeResult(res, { 'insertError': "", 'error': ""});
+							});
+						}
+
+					});	
+				}
+			}
+		}	
+	}
 }
 
 //"Start Program" by reading index.html
