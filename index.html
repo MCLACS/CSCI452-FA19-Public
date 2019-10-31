@@ -600,7 +600,7 @@
                 $('#insertError').empty();
                 let lang = $('#langInsert').val().trim();
                 let desc = $('#descInsert').val().trim();
-                let snippet = encodeURIComponent(('#codeInsert').val().trim());
+                let snippet = encodeURIComponent($('#codeInsert').val().trim());
                 sendRequest("insertSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
                 {
                     if(model.insertError == undefined || model.insertError == "")
