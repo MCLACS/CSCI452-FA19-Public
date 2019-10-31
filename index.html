@@ -15,6 +15,7 @@
             cursor: pointer;
         }
 
+        #insertError,
         #regError,
         #loginError,
         #changePassError {
@@ -40,6 +41,7 @@
             <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
             <ul class="nav navbar-nav navbar-right">
                 <li>
+                    <a href ="#" id = 'snippetBtn'>Add Code Snippet</a>
                     <a href="#" id='loginBtn'>Login/Register</a>
                     <span id="currUser"></span>
                     <a href="#" id='logoutBtn'>Logout</a>
@@ -234,6 +236,41 @@
             </div>
         </div>
     </div>
+    <!--Modal to add a snippet to the database-->
+    <div id='insertSnippetDlg' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title">Snippet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>Add A Snippet</h4>
+                    <form class="border border-primary p-3">
+                        <div class="form-group">
+                            <label for = "langInsert">Language:</label>
+                            <input type="text" class="form-control" id="langInsert" name="langInsert" placeholder="Language">
+                        </div>
+                        <div class="form-group">
+                            <label for = "descInsert">Description:</label>
+                            <input type="text" class="form-control" id="descInsert" name="descInsert" placeholder="Description">
+                        </div>
+                        <div class="form-group">
+                            <label for = "codeInsert">Code:</label>
+                            <textarea class="form-control" rows = "10" id="codeInsert" name="codeInsert" placeholder="Code"></textarea>
+                        </div>                        
+                    </form> 
+                    <pre id = "insertError"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button id='submitSnippetBtn' type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>     
 
     <script>
         /* global $ */
@@ -246,6 +283,7 @@
                 model.regError = "";
                 model.loginError = "";
                 model.changePassError = "";
+                model.insertError = "";
                 model.user = {};
                 model.result = {};
                 model.filter = "";
@@ -270,6 +308,7 @@
                 }
                 else {
                     //add registration error to modal
+                    $("#insertError").text(model.insertError);
                     $("#regError").text(model.regError);
                     $("#loginError").text(model.loginError);
                     $("#changePassError").text(model.changePassError);
@@ -302,11 +341,13 @@
 
                     if (model.user.email != undefined) {
                         $('#currUser').text("Hello, " + model.user.email);
+                        $("#snippetBtn").show();
                         $("#loginBtn").hide();
                         $("#logoutBtn").show();
                     }
                     else {
                         $('#currUser').text("");
+                        $("#snippetBtn").hide(); 
                         $("#loginBtn").show();
                         $("#logoutBtn").hide();
                     }
@@ -371,9 +412,11 @@
                         model.userQuestions = json.userQuestions;
                     
                     //If an error is not returned from server, we don't want to store our old errors
+                    model.insertError = json.insertError;
                     model.regError = json.regError;
                     model.loginError = json.loginError;
                     model.changePassError = json.changePassError;
+                    model.insertError = json.insertError;
 
                     updateView();
 
@@ -545,7 +588,49 @@
                 });
             });
 
+            $('#snippetBtn').click(function(){
+                $('#langInsert').val('');
+                $('#descInsert').val('');
+                $('#codeInsert').val('');
+                $('#insertSnippetDlg').modal('show');
+            });
+
+            $('#submitSnippetBtn').click(function()
+            {
+                $('#insertError').empty();
+                let lang = $('#langInsert').val().trim();
+                let desc = $('#descInsert').val().trim();
+                let snippet = encodeURIComponent($('#codeInsert').val().trim());
+                sendRequest("insertSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
+                {
+                    if(model.insertError == undefined || model.insertError == "")
+                    {
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                        $('#insertSnippetDlg').modal('hide');
+                    }
+                });
+            });
+            
+            //Captures the tab key when using it in a text area, has it function as a "tab" key when typing, not shifting focus to next line
+            $("textarea").keydown(function(e){
+                if(e.keyCode === 9){
+                    let start = this.selectionStart;
+                    let end = this.selectionEnd;
+                    let $this = $(this);
+                    let value = $this.val();
+
+                    $this.val(value.substring(0, start) + "\t" + value.substring(end));
+                    this.selectionStart = this.selectionEnd = start + 1;
+
+                    e.preventDefault();
+                }
+            });            
+
             //erases error message after a modal is hidden(canceled or closed)
+            $("#insertSnippetDlg").on("hide.bs.modal", function() {
+                $("#insertError").empty(); 
+            });
+
             $("#loginDlg").on("hide.bs.modal", function () {
                 $("#loginError").empty();
             });
