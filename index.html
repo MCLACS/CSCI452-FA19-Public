@@ -602,7 +602,7 @@
             $('#snippetBtn').click(function(){
                 $('#descInsert').val('');
                 $('#codeInsert').val('');
-                sendRequest("getLanuages", function () {
+                sendRequest("getLanguages", function () {
                     if (model.error == undefined || model.error == "") {
                         $('#langInsert').empty();
                         $('#insertSnippetDlg').modal('show');

@@ -155,7 +155,7 @@ function getQuestions(req, res) {
 }
 
 //Returns all languages from DB to populate dropdown menu in create snippet modal
-function getLanuages(req, res) {
+function getLanguages(req, res) {
   var con = mysql.createConnection(conInfo);
   con.connect(function (err) {
     if (err)
