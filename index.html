@@ -251,7 +251,7 @@
                     <form class="border border-primary p-3">
                         <div class="form-group">
                             <label for = "langInsert">Language:</label>
-                            <input type="text" class="form-control" id="langInsert" name="langInsert" placeholder="Language">
+                            <select class="form-control" id="langInsert" name="langInsert"></select>
                         </div>
                         <div class="form-group">
                             <label for = "descInsert">Description:</label>
@@ -391,6 +391,15 @@
 
                         $("#Q2").append(item);
                     }
+
+                    // Populate Language Dropdown
+                    for (let i in model.languages) {
+                        let item = $("<option></option>");
+                        item.attr("value", model.languages[i].LANG_NAME);
+                        item.text(model.languages[i].LANG_NAME);
+
+                        $("#langInsert").append(item);
+                    }
                 }
             }
 
@@ -408,6 +417,8 @@
                         model.user = {};
                     if (json.questions != undefined)
                         model.questions = json.questions;
+                    if (json.lanuages != undefined)
+                        model.languages = json.languages;
                     if (json.userQuestions != undefined)
                         model.userQuestions = json.userQuestions;
                     
@@ -589,10 +600,15 @@
             });
 
             $('#snippetBtn').click(function(){
-                $('#langInsert').val('');
                 $('#descInsert').val('');
                 $('#codeInsert').val('');
-                $('#insertSnippetDlg').modal('show');
+                sendRequest("getLanuages", function () {
+                    if (model.error == undefined || model.error == "") {
+                        $('#langInsert').empty();
+                        $('#insertSnippetDlg').modal('show');
+                    }
+                });
+                
             });
 
             $('#submitSnippetBtn').click(function()
