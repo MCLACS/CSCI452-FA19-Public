@@ -259,7 +259,7 @@
                         </div>
                         <div class="form-group">
                             <label for = "codeInsert">Code:</label>
-                            <textarea class="form-control" rows = "10" id="codeInsert" name="codeInsert" placeholder="Code"></textarea>
+                            <textarea class="form-control" rows = "10" id="codeInsert" name="codeInsert" placeholder="Code"><pre><code></code></pre></textarea>
                         </div>                        
                     </form> 
                     <pre id = "insertError"></pre>
@@ -614,8 +614,8 @@
             $('#submitSnippetBtn').click(function()
             {
                 $('#insertError').empty();
-                let lang = $('#langInsert').val().trim();
-                let desc = $('#descInsert').val().trim();
+                let lang = encodeURIComponent($('#langInsert').val().trim());
+                let desc = encodeURIComponent( $('#descInsert').val().trim());
                 let snippet = encodeURIComponent($('#codeInsert').val().trim());
                 sendRequest("insertSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
                 {
