@@ -106,13 +106,16 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-light">
-                    <h5 id='snippetTitle' class="modal-title">Test</h5>
+                    <h5 id='snippetTitle' class="modal-title">Snippet</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <pre><code id='snippetText'></code></pre>
+                    <br>
+                    <button id='editSnippetBtn' type="button" class="btn btn-primary">Edit</button>
+                    <button id='deleteSnippetBtn' type="button" class="btn btn-primary">Confirm</button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -270,6 +273,40 @@
                 </div>
             </div>
         </div>
+        <!-- Edit Snippet Modal -->
+        <div id='editSnippetDlg' class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-light">
+                        <h5 class="modal-title">Update Snippet</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Update This Snippet</h4>
+                        <form class="border border-primary p-3">
+                            <div class="form-group">
+                                <label for = "langEdit">Language:</label>
+                                <select class="form-control" id="langEdit" name="langEdit"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for = "descEdit">Description:</label>
+                                <input type="text" class="form-control" id="descEdit" name="descEdit" placeholder="Description">
+                            </div>
+                            <div class="form-group">
+                                <label for = "codeEdit">Code:</label>
+                                <textarea class="form-control" rows = "10" id="codeEdit" name="codeEdit" placeholder="Code"><pre><code></code></pre></textarea>
+                            </div>                        
+                        </form> 
+                        <pre id = "updateError"></pre>
+                    </div>
+                    <div class="modal-footer">
+                        <button id='submitEditSnippetBtn' type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
     </div>     
 
     <script>
@@ -399,6 +436,7 @@
                         item.text(model.languages[i].LANG_NAME);
 
                         $("#langInsert").append(item);
+                        $("#langEdit").append(item);
                     }
                 }
             }
@@ -501,12 +539,24 @@
 
             $(document).on("click", ".snipRow", function () {
                 let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;
+                model.selectedSnippet = model.result[$(this).attr("id")];
+                model.selectedSnippetID = $(this).attr("id");
                 $('#snippetText').empty();
                 $('#snippetTitle').empty();
                 //needed for syntax highlighting, also auto escapes html tags.
                 $('#snippetText').append(hljs.highlightAuto(formatted).value);
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
+                if(model.user == model.result[$(this).attr("id")].SNIP_CREATOR)
+                {
+                    $('#editSnippetBtn').show();
+                    $('#deleteSnippetBtn').show();
+                }
+                else
+                {
+                    $('#editSnippetBtn').hide();
+                    $('#deleteSnippetBtn').hide();
+                }
             });
 
             $('#registerBtn').click(function () {
@@ -627,6 +677,45 @@
                 });
             });
             
+            $('#editSnippetBtn').click(function(){
+                $('#descEdit').val(model.selectedSnippet.SNIP_DESC);
+                $('#codeEdit').val(model.selectedSnippet.SNIP_SNIPPET);
+                $('#langEdit').empty();
+                sendRequest("getLanguages", function () {
+                    if (model.error == undefined || model.error == "") {
+                        $('#langEdit').val(model.selectedSnippet.SNIP_LANG);
+                        $('#insertSnippetDlg').modal('show');
+                    }
+                });
+                
+            });
+
+            $('#deleteSnippetBtn').click(function(){
+                let id = model.selectedSnippetID;
+                sendRequest("leteSnippet?id="+id, function () {
+                    if (model.deleteError == undefined || model.deleteError == "") {
+                        $('#insertSnippetDlg').modal('show');
+                    }
+                });
+                
+            });
+
+            $('#submitEditSnippetBtn').click(function()
+            {
+                $('#updateError').empty();
+                let lang = encodeURIComponent($('#langEdit').val().trim());
+                let desc = encodeURIComponent( $('#descEdit').val().trim());
+                let snippet = encodeURIComponent($('#codeEdit').val().trim());
+                sendRequest("updateSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
+                {
+                    if(model.updateError == undefined || model.updateError == "")
+                    {
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                        $('editSnippetDlg').modal('hide');
+                    }
+                });
+            });
+
             //Captures the tab key when using it in a text area, has it function as a "tab" key when typing, not shifting focus to next line
             $("textarea").keydown(function(e){
                 if(e.keyCode === 9){
