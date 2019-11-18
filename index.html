@@ -684,7 +684,7 @@
                 sendRequest("getLanguages", function () {
                     if (model.error == undefined || model.error == "") {
                         $('#langEdit').val(model.selectedSnippet.SNIP_LANG);
-                        $('#insertSnippetDlg').modal('show');
+                        $('#editSnippetDlg').modal('show');
                     }
                 });
                 
