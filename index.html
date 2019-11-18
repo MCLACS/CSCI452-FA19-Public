@@ -307,6 +307,7 @@
                     </div>
                 </div>
             </div>
+        </div>>
     </div>     
 
     <script>
@@ -684,8 +685,9 @@
                 sendRequest("getLanguages", function () {
                     if (model.error == undefined || model.error == "") {
                         $('#langEdit').val(model.selectedSnippet.SNIP_LANG);
-                        $('#snippetDlg').modal('hide');
                         $('#editSnippetDlg').modal('show');
+                        $('#snippetDlg').modal('hide');
+                        
                     }
                 });
                 
