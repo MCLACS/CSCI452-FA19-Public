@@ -684,6 +684,7 @@
                 sendRequest("getLanguages", function () {
                     if (model.error == undefined || model.error == "") {
                         $('#langEdit').val(model.selectedSnippet.SNIP_LANG);
+                        $('#snippetDlg').modal('hide');
                         $('#editSnippetDlg').modal('show');
                     }
                 });
@@ -694,7 +695,7 @@
                 let id = model.selectedSnippetID;
                 sendRequest("leteSnippet?id="+id, function () {
                     if (model.deleteError == undefined || model.deleteError == "") {
-                        $('#insertSnippetDlg').modal('show');
+                        $('#snippetDlg').modal('hide');
                     }
                 });
                 
