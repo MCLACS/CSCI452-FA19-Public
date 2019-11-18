@@ -547,7 +547,7 @@
                 $('#snippetText').append(hljs.highlightAuto(formatted).value);
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
-                if(model.user == model.result[$(this).attr("id")].SNIP_CREATOR)
+                if(model.user.email == model.result[$(this).attr("id")].SNIP_CREATOR)
                 {
                     $('#editSnippetBtn').show();
                     $('#deleteSnippetBtn').show();
