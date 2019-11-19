@@ -312,7 +312,6 @@
                 </div>
             </div>
         </div>
-    </div>>
     </div>
 
     <script>
@@ -434,7 +433,8 @@
 
                         $("#Q2").append(item);
                     }
-
+                    $("#langInsert").empty();
+                    $("#langEdit").empty();
                     // Populate Language Dropdown
                     for (let i in model.languages) {
                         let item = $("<option></option>");
@@ -442,6 +442,12 @@
                         item.text(model.languages[i].LANG_NAME);
 
                         $("#langInsert").append(item);
+                    }
+                    for (let i in model.languages) {
+                        let item = $("<option></option>");
+                        item.attr("value", model.languages[i].LANG_NAME);
+                        item.text(model.languages[i].LANG_NAME);
+
                         $("#langEdit").append(item);
                     }
                 }
@@ -546,7 +552,7 @@
             $(document).on("click", ".snipRow", function () {
                 let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;
                 model.selectedSnippet = model.result[$(this).attr("id")];
-                model.selectedSnippetID = $(this).attr("id");
+                model.selectedSnippetID = model.result[$(this).attr("id")].SNIP_ID;
                 $('#snippetText').empty();
                 $('#snippetTitle').empty();
                 //needed for syntax highlighting, also auto escapes html tags.
@@ -694,24 +700,31 @@
 
             $('#deleteSnippetBtn').click(function () {
                 let id = model.selectedSnippetID;
-                sendRequest("leteSnippet?id=" + id, function () {
+                sendRequest("deleteSnippet?id=" + id, function () {
                     if (model.deleteError == undefined || model.deleteError == "") {
                         $('#snippetDlg').modal('hide');
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                     }
+                    else
+                        $('#deleteError').text(model.deleteError);
                 });
 
             });
 
             $('#submitEditSnippetBtn').click(function () {
                 $('#updateError').empty();
+                let id = model.selectedSnippetID;
                 let lang = encodeURIComponent($('#langEdit').val().trim());
+                console.log(lang);
                 let desc = encodeURIComponent($('#descEdit').val().trim());
                 let snippet = encodeURIComponent($('#codeEdit').val().trim());
-                sendRequest("updateSnippet?lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                sendRequest("updateSnippet?id=" + id + "&lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
                     if (model.updateError == undefined || model.updateError == "") {
-                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
-                        $('editSnippetDlg').modal('hide');
+                        $('#editSnippetDlg').modal('hide');
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);  
                     }
+                    else
+                        $("#updateError").text(model.updateError);
                 });
             });
 

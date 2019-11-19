@@ -38,6 +38,8 @@ app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
 app.all('/insertSnippet', insertSnippet);
+app.all('/deleteSnippet', deleteSnippet);
+app.all('/updateSnippet', updateSnippet);
 
 //Notifies the admin what port the server is listening on
 function startHandler() {
@@ -410,6 +412,127 @@ function insertSnippet(req, res) {
       }
     }
   }
+}
+//delete a snippet created by the user, send error if user isn't logged in
+function deleteSnippet(req, res){
+
+	//if user isn't logged in throw error
+	if (req.session.user == undefined)
+		writeResult(res, {'deleteError': 'No user logged in'});
+
+	else{
+		//if no snippet selected
+		if(req.query.id == undefined)
+			writeResult(res, {'deleteError' : 'No Snippet is Selected to delete'});
+		else{
+			var con = mysql.createConnection(conInfo);
+			con.connect(function (err){
+				if (err)
+					writeResult(res, {'error': err});
+
+				else {
+
+			
+					con.query("SELECT * FROM SNIPPET WHERE SNIP_ID = ?", [req.query.id], function(err, result, fields) {
+			
+						if(err)
+							writeResult(res, {'error' : err});
+						else{
+							console.log(req.query.id);
+							console.log("result: " + result[0].SNIP_CREATOR + "user: " + req.session.user.email);
+							if(result[0].SNIP_CREATOR != req.session.user.email)
+								writeResult(res, {'deleteError' : 'This is not your snipper to delete'});
+							else{
+								con.query("DELETE FROM SNIPPET WHERE SNIP_ID = ?", [req.query.id], function(err, result, fields){
+
+									if(err)
+										writeResult(res, {'error' : err});
+									else{
+								
+										writeResult(res, {'deleteError' : "", 'error': ""});
+									}
+								});
+							} 
+
+						}
+					});
+				}	
+			});
+		
+		}
+	}
+}
+
+//edit snippet owned by user 
+function updateSnippet(req, res){
+	
+	if(req.session.user == undefined)
+		writeResult(res, {'updateError' : 'No user logged in'});
+	else{
+		console.log("user good");
+		//check if req.query.desc is valid for snip_desc
+		if (req.query.desc == undefined || req.query.desc.length > 255)
+			writeResult(res, { 'updateError': "Description invalid" });
+    		else {
+      			//check if req.query.language is valid for snip_snippet
+
+			console.log("DESC GOOD");
+			console.log("LANG: " + req.query.lang);
+      			if (req.query.lang == undefined || req.query.lang.length > 4294967295)
+        			writeResult(res, { 'updateError': "Language invalid" });
+      			else {
+				console.log("Lang good" +  req.query.lang);
+        			//check if req.query.snippet is valid for snip_snippet
+        			if (req.query.snippet == undefined || req.query.snippet.length > 4294967295)
+          				writeResult(res, { 'updateError': "Snippet invalid" });
+
+				else{
+					console.log("Snippet goof");
+					if(req.query.id == undefined)
+						writeResult(res, {'updateError' : "no Snippet selected"});
+
+					else{
+						console.log("ID IS GOOD");
+						var con = mysql.createConnection(conInfo)
+						con.connect(function(err) {
+							if(err)
+								writeResult(res, {'error' : err});
+
+							else{
+
+								con.query("SELECT *  FROM SNIPPET WHERE SNIP_ID = ?", [req.query.id], function(err, result, fields){
+									if(err)
+										writeResult(res, {'error': err});
+									else{
+										console.log(result[0].SNIP_CREATOR + " " + req.session.user.email);
+										console.log(req.query.id);
+										if(result[0].SNIP_CREATOR != req.session.user.email)
+											writeResult(res, {'updateError' : 'You do not own this snippet'});
+										else{
+											
+											con.query("UPDATE SNIPPET SET SNIP_LANG = ?, SNIP_DESC = ?, SNIP_SNIPPET = ? WHERE SNIP_ID = ?", [req.query.lang, req.query.desc, req.query.snippet, req.query.id], function(err, result, fields){
+												if(err)
+													writeResult(res, {'error': err});
+												else{
+													writeResult(res, {'updateError': "", 'error' : ""});
+												}
+											});
+										
+										}
+
+									}
+
+								});
+							}
+
+						});
+					}		
+				}
+				
+			}
+		}
+	}
+
 }
 
 //"Start Program" by reading index.html
