@@ -438,7 +438,7 @@
                     // Populate Language Dropdown
                     for (let i in model.languages) {
                         let item = $("<option></option>");
-                        item.attr("value", model.languages[i].LANG_NAME);
+                        item.attr("value", model.languages[i].LANG_ID);
                         item.text(model.languages[i].LANG_NAME);
 
                         $("#langInsert").append(item);
@@ -694,7 +694,7 @@
 
             $('#deleteSnippetBtn').click(function () {
                 let id = model.selectedSnippetID;
-                sendRequest("leteSnippet?id=" + id, function () {
+                sendRequest("deleteSnippet?id=" + id, function () {
                     if (model.deleteError == undefined || model.deleteError == "") {
                         $('#snippetDlg').modal('hide');
                     }
@@ -704,10 +704,11 @@
 
             $('#submitEditSnippetBtn').click(function () {
                 $('#updateError').empty();
+		let id = model.selectedSnippetID;
                 let lang = encodeURIComponent($('#langEdit').val().trim());
                 let desc = encodeURIComponent($('#descEdit').val().trim());
                 let snippet = encodeURIComponent($('#codeEdit').val().trim());
-                sendRequest("updateSnippet?lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                sendRequest("updateSnippet?id="+id+"lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
                     if (model.updateError == undefined || model.updateError == "") {
                         sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                         $('editSnippetDlg').modal('hide');
