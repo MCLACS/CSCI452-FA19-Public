@@ -37,6 +37,8 @@ app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
 app.all('/insertSnippet', insertSnippet);
+//Only for use with test.py
+app.all('/deleteUser', delUser);
 
 //Notifies the admin what port the server is listening on
 function startHandler() {
@@ -86,8 +88,8 @@ function register(req, res) {
                   if (err) {
                     writeResult(res, { 'error': err });
                     console.log(err);
-                  }
-                  //Logging the user in
+		  }
+                  // the user in
                   else {
                           con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function(err, result, fields)
                           {
@@ -400,6 +402,31 @@ function insertSnippet(req, res) {
 			}
 		}	
 	}
+}
+
+//using only for test.py to remove test user from database
+function delUser(req, res)
+{
+	var con = mysql.createConnection(conInfo);
+	con.connect(function (err) {
+
+		if (err){
+			console.log("Couldnt connect");
+			writeResult(res, {'error' : err});
+		}
+		else {
+			con.query("DELETE FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function(err, result, fields){
+
+				if(err)
+					writeResult(res, {'error' : err});
+				else{
+					writeResult(res, {'delSuccess' : "Deleted User"});
+				}
+			});
+		}
+
+	});
+	
 }
 
 //"Start Program" by reading index.html
