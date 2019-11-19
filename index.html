@@ -434,7 +434,8 @@
 
                         $("#Q2").append(item);
                     }
-
+                    $("#langInsert").empty();
+		    $("#langEdit").empty();
                     // Populate Language Dropdown
                     for (let i in model.languages) {
                         let item = $("<option></option>");
@@ -442,8 +443,15 @@
                         item.text(model.languages[i].LANG_NAME);
 
                         $("#langInsert").append(item);
-                        $("#langEdit").append(item);
                     }
+
+		    for (let i in model.languages) {
+			let item = $("<option></option>");
+			item.attr("value", model.languages[i].LANG_ID);
+			item.text(model.languages[i].LANG_NAME);
+			
+			$("#langEdit").append(item);
+		    }
                 }
             }
 

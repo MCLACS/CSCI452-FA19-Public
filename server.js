@@ -438,8 +438,9 @@ function deleteSnippet(req, res){
 						if(err)
 							writeResult(res, {'error' : err});
 						else{
-
-							if(result != req.session.user)
+							console.log(req.query.id);
+							console.log("result: " + result + "user: " + req.session.user.email);
+							if(result != req.session.user.email)
 								writeResult(res, {'deleteError' : 'This is not your snipper to delete'});
 							else{
 								con.query("DELETE FROM SNIPPET WHERE SNIP_ID = ?", [req.query.id], function(err, result, fields){
@@ -496,7 +497,7 @@ function updateSnippet(req, res){
 									if(err)
 										writeResult(res, {'error': err});
 									else{
-										if(result != req.session.user)
+										if(result != req.session.user.email)
 											writeResult(res, {'updateError' : 'You do not own this snippet'});
 										else{
 											
