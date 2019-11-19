@@ -443,15 +443,8 @@
                         item.text(model.languages[i].LANG_NAME);
 
                         $("#langInsert").append(item);
+                        $("#langEdit").append(item);
                     }
-
-		    for (let i in model.languages) {
-			let item = $("<option></option>");
-			item.attr("value", model.languages[i].LANG_NAME);
-			item.text(model.languages[i].LANG_NAME);
-			
-			$("#langEdit").append(item);
-		    }
                 }
             }
 
