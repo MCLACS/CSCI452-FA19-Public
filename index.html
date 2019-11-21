@@ -384,6 +384,18 @@
                         q2List.attr("value", model.questions[i].QUEST_ID);
                         q2List.text(model.questions[i].QUEST_TEXT);
                         
+                        //Initilized Case
+                        if(i == 0)
+                        {
+                            q1List.attr("selected", true);
+                            q2List.attr("disabled", true);
+                        }
+                        if(i == 1)
+                        {
+                            q1List.attr("disabled", true);
+                            q2List.attr("selected", true);
+                        }
+                        
                         $("#Q1").append(q1List);
                         $("#Q2").append(q2List);
                     }
