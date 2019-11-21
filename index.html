@@ -568,12 +568,11 @@
                     }
                 });
             });
-
+            
+            //Disables the option selected in Q1 in Q2
             $('#Q1').change(function() {
                 console.log("Q1 Triggered");
                 let selected = $('#Q1').val();
-                let q2List = document.getElementById("#Q2");
-                console.log(q2List);
                 $("#Q2 > option").each(function() {
                     if(selected == this.value)
                         this.disabled = true;
@@ -581,15 +580,15 @@
                 });
             });
             
+            //Disables the option selected in Q2 in Q1
             $('#Q2').change(function() {
                 console.log("Q2 Triggered");
                 let selected = $('#Q2').val();
-                let q2List = document.getElementById("#Q1");
-                for (var i = 0; i < q2List.length; i++){
-                    if(selected == q2List.options[i].val())
-                        q2List.disabled = true;
-                    else q2List.disabled =false;
-                }
+                $("#Q2 > option").each(function() {
+                    if(selected == this.value)
+                        this.disabled = true;
+                    else this.disabled =false;
+                });
             });
             
             $('#confirmRegisterBtn').click(function () {
