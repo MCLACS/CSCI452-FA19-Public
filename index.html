@@ -377,12 +377,15 @@
                     $('#Q1').empty();
                     $('#Q2').empty();
                     for (let i in model.questions) {
-                        let item = $("<option></option>");
-                        item.attr("value", model.questions[i].QUEST_ID);
-                        item.text(model.questions[i].QUEST_TEXT);
-
-                        $("#Q1").append(item);
-                        $("#Q2").append(JSON.parse(JSON.stringify(item)));
+                        let q1List = $("<option></option>");
+                        let q2List = $("<option></option>");
+                        q1List.attr("value", model.questions[i].QUEST_ID);
+                        q1List.text(model.questions[i].QUEST_TEXT);
+                        q2List.attr("value", model.questions[i].QUEST_ID);
+                        q2List.text(model.questions[i].QUEST_TEXT);
+                        
+                        $("#Q1").append(q1List);
+                        $("#Q2").append(q2List);
                     }
 
                     // Populate Language Dropdown
