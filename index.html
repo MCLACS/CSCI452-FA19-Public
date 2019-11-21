@@ -419,19 +419,27 @@
                     $('#Q1').empty();
                     $('#Q2').empty();
                     for (let i in model.questions) {
-                        let item = $("<option></option>");
-                        item.attr("value", model.questions[i].QUEST_ID);
-                        item.text(model.questions[i].QUEST_TEXT);
-
-                        $("#Q1").append(item);
-                    }
-                    // TODO: what the fuck is this shit
-                    for (let i in model.questions) {
-                        let item = $("<option></option>");
-                        item.attr("value", model.questions[i].QUEST_ID);
-                        item.text(model.questions[i].QUEST_TEXT);
-
-                        $("#Q2").append(item);
+                        let q1List = $("<option></option>");
+                        let q2List = $("<option></option>");
+                        q1List.attr("value", model.questions[i].QUEST_ID);
+                        q1List.text(model.questions[i].QUEST_TEXT);
+                        q2List.attr("value", model.questions[i].QUEST_ID);
+                        q2List.text(model.questions[i].QUEST_TEXT);
+                        
+                        //Initilized Case
+                        if(i == 0)
+                        {
+                            q1List.attr("selected", true);
+                            q2List.attr("disabled", true);
+                        }
+                        if(i == 1)
+                        {
+                            q1List.attr("disabled", true);
+                            q2List.attr("selected", true);
+                        }
+                        
+                        $("#Q1").append(q1List);
+                        $("#Q2").append(q2List);
                     }
                     $("#langInsert").empty();
                     $("#langEdit").empty();
@@ -631,7 +639,29 @@
                     }
                 });
             });
-
+            
+            //Disables the option selected in Q1 in Q2
+            $('#Q1').change(function() {
+                console.log("Q1 Triggered");
+                let selected = $('#Q1').val();
+                $("#Q2 > option").each(function() {
+                    if(selected == this.value)
+                        this.disabled = true;
+                    else this.disabled =false;
+                });
+            });
+            
+            //Disables the option selected in Q2 in Q1
+            $('#Q2').change(function() {
+                console.log("Q2 Triggered");
+                let selected = $('#Q2').val();
+                $("#Q1 > option").each(function() {
+                    if(selected == this.value)
+                        this.disabled = true;
+                    else this.disabled =false;
+                });
+            });
+            
             $('#confirmRegisterBtn').click(function () {
                 $('#regError').empty();
                 let email = $('#regEmail').val().trim();
