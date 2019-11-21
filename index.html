@@ -573,6 +573,7 @@
                 console.log("Q1 Triggered");
                 let selected = $('#Q1').val();
                 let q2List = document.getElementById("#Q2");
+                console.log(q2List);
                 for (var i = 0; i < q2List.length; i++){
                     if(selected == q2List.options[i].val())
                         q2List.disabled = true;
