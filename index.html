@@ -575,7 +575,7 @@
                 let q2List = document.getElementById("#Q2");
                 console.log(q2List);
                 $("#Q2 > option").each(function() {
-                    if(selected == this.val())
+                    if(selected == this.value)
                         this.disabled = true;
                     else this.disabled =false;
                 });
