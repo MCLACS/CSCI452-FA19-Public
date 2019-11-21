@@ -572,11 +572,11 @@
             $('#Q1').change(function() {
                 console.log("Q1 Triggered");
                 let selected = $('#Q1').val();
-                for (let i in $('#Q2')) {
-                    i.attr("disabled", false);
-                    if(i.val() == selected)
-                        i.attr("disabled", true);
-                }
+                $("#Q2 > option").each(function() {
+                    this.disabled = false;
+                    if(this.val == selected)
+                        this.disabled = true;
+                });
             });
             
             $('#Q2').change(function() {
