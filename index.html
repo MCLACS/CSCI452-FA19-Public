@@ -572,21 +572,22 @@
             $('#Q1').change(function() {
                 console.log("Q1 Triggered");
                 let selected = $('#Q1').val();
-                $("#Q2 option").each(function(i) {
-                    this.disabled = false;
-                    if(this.val == selected)
-                        this.disabled = true;
-                });
+                let q2List = document.getElementById("#Q2");
+                for (var i = 0; i < q2List.length; i++){
+                    if(selected == q2List.options[i].val())
+                        q2List.disabled = true;
+                    else q2List.disabled =false;
+                }
             });
             
             $('#Q2').change(function() {
                 console.log("Q2 Triggered");
-                console.log("Q1 Triggered");
                 let selected = $('#Q2').val();
-                for (let i in $('#Q1')) {
-                    i.attr("disabled", false);
-                    if(i.val() == selected)
-                        i.attr("disabled", true);
+                let q2List = document.getElementById("#Q1");
+                for (var i = 0; i < q2List.length; i++){
+                    if(selected == q2List.options[i].val())
+                        q2List.disabled = true;
+                    else q2List.disabled =false;
                 }
             });
             
