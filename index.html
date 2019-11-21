@@ -41,7 +41,7 @@
             <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href ="#" id = 'snippetBtn'>Add Code Snippet</a>
+                    <a href="#" id='snippetBtn'>Add Code Snippet</a>
                     <a href="#" id='loginBtn'>Login/Register</a>
                     <span id="currUser"></span>
                     <a href="#" id='logoutBtn'>Logout</a>
@@ -106,13 +106,16 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-light">
-                    <h5 id='snippetTitle' class="modal-title">Test</h5>
+                    <h5 id='snippetTitle' class="modal-title">Snippet</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <pre><code id='snippetText'></code></pre>
+                    <br>
+                    <button id='editSnippetBtn' type="button" class="btn btn-primary">Edit</button>
+                    <button id='deleteSnippetBtn' type="button" class="btn btn-primary">Delete</button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -250,19 +253,21 @@
                     <h4>Add A Snippet</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
-                            <label for = "langInsert">Language:</label>
+                            <label for="langInsert">Language:</label>
                             <select class="form-control" id="langInsert" name="langInsert"></select>
                         </div>
                         <div class="form-group">
-                            <label for = "descInsert">Description:</label>
-                            <input type="text" class="form-control" id="descInsert" name="descInsert" placeholder="Description">
+                            <label for="descInsert">Description:</label>
+                            <input type="text" class="form-control" id="descInsert" name="descInsert"
+                                placeholder="Description">
                         </div>
                         <div class="form-group">
-                            <label for = "codeInsert">Code:</label>
-                            <textarea class="form-control" rows = "10" id="codeInsert" name="codeInsert" placeholder="Code"><pre><code></code></pre></textarea>
-                        </div>                        
-                    </form> 
-                    <pre id = "insertError"></pre>
+                            <label for="codeInsert">Code:</label>
+                            <textarea class="form-control" rows="10" id="codeInsert" name="codeInsert"
+                                placeholder="Code"><pre><code></code></pre></textarea>
+                        </div>
+                    </form>
+                    <pre id="insertError"></pre>
                 </div>
                 <div class="modal-footer">
                     <button id='submitSnippetBtn' type="button" class="btn btn-primary">Submit</button>
@@ -270,7 +275,44 @@
                 </div>
             </div>
         </div>
-    </div>     
+    </div>
+    <!-- Edit Snippet Modal -->
+    <div id='editSnippetDlg' class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-light">
+                    <h5 class="modal-title">Update Snippet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>Update This Snippet</h4>
+                    <form class="border border-primary p-3">
+                        <div class="form-group">
+                            <label for="langEdit">Language:</label>
+                            <select class="form-control" id="langEdit" name="langEdit"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="descEdit">Description:</label>
+                            <input type="text" class="form-control" id="descEdit" name="descEdit"
+                                placeholder="Description">
+                        </div>
+                        <div class="form-group">
+                            <label for="codeEdit">Code:</label>
+                            <textarea class="form-control" rows="10" id="codeEdit" name="codeEdit"
+                                placeholder="Code"><pre><code></code></pre></textarea>
+                        </div>
+                    </form>
+                    <pre id="updateError"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button id='submitEditSnippetBtn' type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         /* global $ */
@@ -347,7 +389,7 @@
                     }
                     else {
                         $('#currUser').text("");
-                        $("#snippetBtn").hide(); 
+                        $("#snippetBtn").hide();
                         $("#loginBtn").show();
                         $("#logoutBtn").hide();
                     }
@@ -391,7 +433,8 @@
 
                         $("#Q2").append(item);
                     }
-
+                    $("#langInsert").empty();
+                    $("#langEdit").empty();
                     // Populate Language Dropdown
                     for (let i in model.languages) {
                         let item = $("<option></option>");
@@ -399,6 +442,13 @@
                         item.text(model.languages[i].LANG_NAME);
 
                         $("#langInsert").append(item);
+                    }
+                    for (let i in model.languages) {
+                        let item = $("<option></option>");
+                        item.attr("value", model.languages[i].LANG_NAME);
+                        item.text(model.languages[i].LANG_NAME);
+
+                        $("#langEdit").append(item);
                     }
                 }
             }
@@ -421,7 +471,7 @@
                         model.languages = json.languages;
                     if (json.userQuestions != undefined)
                         model.userQuestions = json.userQuestions;
-                    
+
                     //If an error is not returned from server, we don't want to store our old errors
                     model.insertError = json.insertError;
                     model.regError = json.regError;
@@ -501,12 +551,22 @@
 
             $(document).on("click", ".snipRow", function () {
                 let formatted = model.result[$(this).attr("id")].SNIP_SNIPPET;
+                model.selectedSnippet = model.result[$(this).attr("id")];
+                model.selectedSnippetID = model.result[$(this).attr("id")].SNIP_ID;
                 $('#snippetText').empty();
                 $('#snippetTitle').empty();
                 //needed for syntax highlighting, also auto escapes html tags.
                 $('#snippetText').append(hljs.highlightAuto(formatted).value);
                 $('#snippetTitle').append(model.result[$(this).attr("id")].SNIP_DESC + " - " + model.result[$(this).attr("id")].SNIP_CREATOR);
                 $('#snippetDlg').modal('show');
+                if (model.user.email == model.result[$(this).attr("id")].SNIP_CREATOR) {
+                    $('#editSnippetBtn').show();
+                    $('#deleteSnippetBtn').show();
+                }
+                else {
+                    $('#editSnippetBtn').hide();
+                    $('#deleteSnippetBtn').hide();
+                }
             });
 
             $('#registerBtn').click(function () {
@@ -527,12 +587,11 @@
             });
 
             $('#logoutBtn').click(function () {
-                sendRequest("Logout", function() {
-                    if(model.error == "Nobody is logged in.")
-                    {
+                sendRequest("Logout", function () {
+                    if (model.error == "Nobody is logged in.") {
                         $("logOut").empty();
                     }
-                        
+
                 });
             });
 
@@ -543,13 +602,13 @@
                 $('#Answer1').val('');
                 $('#Answer2').val('');
                 sendRequest("getUserQuestions?email=" + email, function () {
-                    if ((model.error == undefined || model.error == "") &&(model.changePassError == undefined || model.changePassError == "")) {
+                    if ((model.error == undefined || model.error == "") && (model.changePassError == undefined || model.changePassError == "")) {
                         $('#Question1').text(model.userQuestions[1].QUEST_TEXT);
                         $('#Question2').text(model.userQuestions[0].QUEST_TEXT);
                         $('#changePassDlg').modal('show');
                         $('#loginDlg').modal('hide');
                     }
-                    else{
+                    else {
                         $('#loginError').text(model.changePassError);
                     }
                 });
@@ -567,7 +626,7 @@
                         $('#loginPassword').val('');
                         $('#loginDlg').modal('show');
                     }
-                    else{
+                    else {
                         $('#changePassError').text(model.changePassError);
                     }
                 });
@@ -599,7 +658,7 @@
                 });
             });
 
-            $('#snippetBtn').click(function(){
+            $('#snippetBtn').click(function () {
                 $('#descInsert').val('');
                 $('#codeInsert').val('');
                 $('#langInsert').empty();
@@ -608,28 +667,70 @@
                         $('#insertSnippetDlg').modal('show');
                     }
                 });
-                
+
             });
 
-            $('#submitSnippetBtn').click(function()
-            {
+            $('#submitSnippetBtn').click(function () {
                 $('#insertError').empty();
                 let lang = encodeURIComponent($('#langInsert').val().trim());
-                let desc = encodeURIComponent( $('#descInsert').val().trim());
+                let desc = encodeURIComponent($('#descInsert').val().trim());
                 let snippet = encodeURIComponent($('#codeInsert').val().trim());
-                sendRequest("insertSnippet?lang="+lang+"&desc="+desc+"&snippet="+snippet+"&email="+model.user.email, function()
-                {
-                    if(model.insertError == undefined || model.insertError == "")
-                    {
+                sendRequest("insertSnippet?lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                    if (model.insertError == undefined || model.insertError == "") {
                         sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                         $('#insertSnippetDlg').modal('hide');
                     }
                 });
             });
-            
+
+            $('#editSnippetBtn').click(function () {
+                $('#descEdit').val(model.selectedSnippet.SNIP_DESC);
+                $('#codeEdit').val(model.selectedSnippet.SNIP_SNIPPET);
+                $('#langEdit').empty();
+                sendRequest("getLanguages", function () {
+                    if (model.error == undefined || model.error == "") {
+                        $('#langEdit').val(model.selectedSnippet.SNIP_LANG);
+                        $('#editSnippetDlg').modal('show');
+                        $('#snippetDlg').modal('hide');
+
+                    }
+                });
+
+            });
+
+            $('#deleteSnippetBtn').click(function () {
+                let id = model.selectedSnippetID;
+                sendRequest("deleteSnippet?id=" + id, function () {
+                    if (model.deleteError == undefined || model.deleteError == "") {
+                        $('#snippetDlg').modal('hide');
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                    }
+                    else
+                        $('#deleteError').text(model.deleteError);
+                });
+
+            });
+
+            $('#submitEditSnippetBtn').click(function () {
+                $('#updateError').empty();
+                let id = model.selectedSnippetID;
+                let lang = encodeURIComponent($('#langEdit').val().trim());
+                console.log(lang);
+                let desc = encodeURIComponent($('#descEdit').val().trim());
+                let snippet = encodeURIComponent($('#codeEdit').val().trim());
+                sendRequest("updateSnippet?id=" + id + "&lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                    if (model.updateError == undefined || model.updateError == "") {
+                        $('#editSnippetDlg').modal('hide');
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);  
+                    }
+                    else
+                        $("#updateError").text(model.updateError);
+                });
+            });
+
             //Captures the tab key when using it in a text area, has it function as a "tab" key when typing, not shifting focus to next line
-            $("textarea").keydown(function(e){
-                if(e.keyCode === 9){
+            $("textarea").keydown(function (e) {
+                if (e.keyCode === 9) {
                     let start = this.selectionStart;
                     let end = this.selectionEnd;
                     let $this = $(this);
@@ -640,11 +741,14 @@
 
                     e.preventDefault();
                 }
-            });            
+            });
 
             //erases error message after a modal is hidden(canceled or closed)
-            $("#insertSnippetDlg").on("hide.bs.modal", function() {
-                $("#insertError").empty(); 
+            $("#insertSnippetDlg").on("hide.bs.modal", function () {
+                $("#insertError").empty();
+            });
+            $("#editSnippetDlg").on("hide.bs.modal", function () {
+                $("#updateError").empty();
             });
 
             $("#loginDlg").on("hide.bs.modal", function () {
