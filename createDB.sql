@@ -636,6 +636,25 @@ INSERT INTO ACCOUNT (ACC_EMAIL, ACC_PASSWORD, ACC_QUESTION_ONE, ACC_ANSWER_ONE, 
 VALUES
 ('admin@mcla.edu', 'Password1234', 1, 'Fido', 5, 'weird rune');
 
+CREATE TABLE LANGUAGES(
+  LANG_ID INT NOT NULL AUTO_INCREMENT,
+  LANG_NAME VARCHAR(255) UNIQUE NOT NULL,
+  PRIMARY KEY(LANG_ID)
+);
+
+INSERT INTO LANGUAGES (LANG_NAME)
+VALUES
+('Java'),
+('C++'),
+('C#'),
+('Python'),
+('Javascript'),
+('Whitespace'),
+('Visual Basic'),
+('PHP'),
+('SQL'),
+('Mongo');
+
 CREATE USER 'sel_user'@'localhost'
   IDENTIFIED BY 'password';
   FLUSH PRIVILEGES;

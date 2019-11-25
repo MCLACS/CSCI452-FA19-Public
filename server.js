@@ -30,6 +30,7 @@ app.use(session({
 app.all('/', serveIndex);
 app.all('/getSnippets', getSnippets);
 app.all('/getQuestions', getQuestions);
+app.all('/getLanguages', getLanguages);
 app.all('/getUserQuestions', getUserQuestions);
 app.all('/register', register);
 app.all('/changePass', changePass);
@@ -37,8 +38,13 @@ app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
 app.all('/insertSnippet', insertSnippet);
+<<<<<<< HEAD
 //Only for use with test.py
 app.all('/deleteUser', delUser);
+=======
+app.all('/deleteSnippet', deleteSnippet);
+app.all('/updateSnippet', updateSnippet);
+>>>>>>> bc3a3ce4302505c0283121fd6a09b8e7cf696a0a
 
 //Notifies the admin what port the server is listening on
 function startHandler() {
@@ -65,8 +71,7 @@ function register(req, res) {
           writeResult(res, { 'regError': "Password must have a minimum of eight characters, at least one letter and one number" });
         }
 
-        else if (req.query.Q1 == req.query.Q2)
-        {
+        else if (req.query.Q1 == req.query.Q2) {
           writeResult(res, { 'regError': "Please choose different questions for your security questions." });
         }
 
@@ -91,16 +96,14 @@ function register(req, res) {
 		  }
                   // the user in
                   else {
-                          con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function(err, result, fields)
-                          {
-                              if(err)
-                                  writeResult(res, {'error' : err});
-                              else 
-                              {
-                                  req.session.user = {'id': result[0].ACC_ID, 'email':result[0].ACC_EMAIL};
-                                  writeResult(res, {'email': req.session.user, 'regError': ""});
-                              }
-                          });
+                    con.query("SELECT * FROM ACCOUNT WHERE ACC_EMAIL = ?", [req.query.email], function (err, result, fields) {
+                      if (err)
+                        writeResult(res, { 'error': err });
+                      else {
+                        req.session.user = { 'id': result[0].ACC_ID, 'email': result[0].ACC_EMAIL };
+                        writeResult(res, { 'email': req.session.user, 'regError': "" });
+                      }
+                    });
                   }
                 });
               }
@@ -158,6 +161,24 @@ function getQuestions(req, res) {
   });
 }
 
+//Returns all languages from DB to populate dropdown menu in create snippet modal
+function getLanguages(req, res) {
+  var con = mysql.createConnection(conInfo);
+  con.connect(function (err) {
+    if (err)
+      writeResult(res, { 'error': err });
+    else {
+      con.query('SELECT * FROM LANGUAGES', function (err, result, fields) {
+        if (err)
+          writeResult(res, { 'error': err });
+        else {
+          writeResult(res, { 'languages': result })
+        }
+      });
+    }
+  });
+}
+
 //Gets user's security questions for change password modal
 //Requires user Email
 //req.query.email 
@@ -188,7 +209,7 @@ function getUserQuestions(req, res) {
                   if (err)
                     writeResult(res, { 'error': err });
                   else {
-                    writeResult(res, { 'userQuestions': result , 'changePassError': ""});
+                    writeResult(res, { 'userQuestions': result, 'changePassError': "" });
                   }
                 });
               }
@@ -240,14 +261,13 @@ function changePass(req, res) {
                     }
                     else {
                       console.log("password changed");
-                      writeResult( res, {'changePassError' : "", 'loginError': ""});
+                      writeResult(res, { 'changePassError': "", 'loginError': "" });
                     }
                   });
                 }
-                else 
-                { 
-                  console.log("invalid answers"); 
-                  writeResult( res, {'changePassError' : "Invalid Answers"})
+                else {
+                  console.log("invalid answers");
+                  writeResult(res, { 'changePassError': "Invalid Answers" })
                 }
               });
             }
@@ -306,7 +326,7 @@ function login(req, res) {
 //Clears Sesssion storage
 function logout(req, res) {
   req.session.user = undefined;
-  writeResult(res, { 'error': 'Nobody is logged in.' , 'email': ''});
+  writeResult(res, { 'error': 'Nobody is logged in.', 'email': '' });
 }
 
 //Checks if an email is useable
@@ -355,53 +375,169 @@ function validatePassword(pass, callback) {
     callback(false);
   }
 
-  else
-  {
+  else {
     var re = /^([ -!]|[#-&]|[--.]|[0-:]|[a-z]|[<-Z]){8,59}$/;
     callback(re.test(pass));
   }
 }
 
 function insertSnippet(req, res) {
-	//if req.query.email is not defined throw error
-	if (req.query.email == undefined) 
-            writeResult(res, { 'insertError': "Email invalid"});
-	else 
-	{
+  //if req.query.email is not defined throw error
+  if (req.query.email == undefined)
+    writeResult(res, { 'insertError': "Email invalid" });
+  else {
+    //check if req.query.desc is valid for snip_desc
+    if (req.query.desc == undefined || req.query.desc.length > 255)
+      writeResult(res, { 'insertError': "Description invalid" });
+    else {
+      //check if req.query.language is valid for snip_snippet
+      if (req.query.lang == undefined || req.query.lang.length > 4294967295)
+        writeResult(res, { 'insertError': "Language invalid" });
+      else {
+        //check if req.query.snippet is valid for snip_snippet
+        if (req.query.snippet == undefined || req.query.snippet.length > 4294967295)
+          writeResult(res, { 'insertError': "Snippet invalid" });
+        else {
+          var con = mysql.createConnection(conInfo);
+          con.connect(function (err) {
+            if (err)
+              writeResult(res, { 'error': err });
+
+            else {
+              con.query("INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET) VALUES (?, ?, ?, ?)", [req.query.email, req.query.lang, req.query.desc, req.query.snippet], function (err, result, fields) {
+                if (err)
+                  writeResult(res, { 'error': err });
+                else
+                  writeResult(res, { 'insertError': "", 'error': "" });
+              });
+            }
+
+          });
+        }
+      }
+    }
+  }
+}
+//delete a snippet created by the user, send error if user isn't logged in
+function deleteSnippet(req, res){
+
+	//if user isn't logged in throw error
+	if (req.session.user == undefined)
+		writeResult(res, {'deleteError': 'No user logged in'});
+
+	else{
+		//if no snippet selected
+		if(req.query.id == undefined)
+			writeResult(res, {'deleteError' : 'No Snippet is Selected to delete'});
+		else{
+			var con = mysql.createConnection(conInfo);
+			con.connect(function (err){
+				if (err)
+					writeResult(res, {'error': err});
+
+				else {
+
+			
+					con.query("SELECT * FROM SNIPPET WHERE SNIP_ID = ?", [req.query.id], function(err, result, fields) {
+			
+						if(err)
+							writeResult(res, {'error' : err});
+						else{
+							console.log(req.query.id);
+							console.log("result: " + result[0].SNIP_CREATOR + "user: " + req.session.user.email);
+							if(result[0].SNIP_CREATOR != req.session.user.email)
+								writeResult(res, {'deleteError' : 'This is not your snipper to delete'});
+							else{
+								con.query("DELETE FROM SNIPPET WHERE SNIP_ID = ?", [req.query.id], function(err, result, fields){
+
+									if(err)
+										writeResult(res, {'error' : err});
+									else{
+								
+										writeResult(res, {'deleteError' : "", 'error': ""});
+									}
+								});
+							} 
+
+						}
+					});
+				}	
+			});
+		
+		}
+	}
+}
+
+//edit snippet owned by user 
+function updateSnippet(req, res){
+	
+	if(req.session.user == undefined)
+		writeResult(res, {'updateError' : 'No user logged in'});
+	else{
+		console.log("user good");
 		//check if req.query.desc is valid for snip_desc
 		if (req.query.desc == undefined || req.query.desc.length > 255)
-			writeResult(res, { 'insertError': "Description invalid"});
-		else
-		{
-			//check if req.query.language is valid for snip_snippet
-                	if (req.query.lang == undefined || req.query.lang.length > 4294967295)
-                        	writeResult(res, { 'insertError': "Language invalid"});
-			else
-			{
-				//check if req.query.snippet is valid for snip_snippet
-                		if (req.query.snippet == undefined || req.query.snippet.length > 4294967295)
-                        		writeResult(res, { 'insertError': "Snippet invalid"});
-				else
-				{
-					var con = mysql.createConnection(conInfo);
-          				con.connect(function (err) {
-           	 				if (err)
-              						writeResult(res, { 'error': err });
-              
-						else {
-                					con.query("INSERT INTO SNIPPET (SNIP_CREATOR, SNIP_LANG, SNIP_DESC, SNIP_SNIPPET) VALUES (?, ?, ?, ?)", [req.query.email, req.query.lang, req.query.desc, req.query.snippet], function (err, result, fields) {
-                  						if (err)
-                                writeResult(res, { 'error': err });
-                              else
-                              writeResult(res, { 'insertError': "", 'error': ""});
-							});
-						}
+			writeResult(res, { 'updateError': "Description invalid" });
+    		else {
+      			//check if req.query.language is valid for snip_snippet
 
-					});	
+			console.log("DESC GOOD");
+			console.log("LANG: " + req.query.lang);
+      			if (req.query.lang == undefined || req.query.lang.length > 4294967295)
+        			writeResult(res, { 'updateError': "Language invalid" });
+      			else {
+				console.log("Lang good" +  req.query.lang);
+        			//check if req.query.snippet is valid for snip_snippet
+        			if (req.query.snippet == undefined || req.query.snippet.length > 4294967295)
+          				writeResult(res, { 'updateError': "Snippet invalid" });
+
+				else{
+					console.log("Snippet goof");
+					if(req.query.id == undefined)
+						writeResult(res, {'updateError' : "no Snippet selected"});
+
+					else{
+						console.log("ID IS GOOD");
+						var con = mysql.createConnection(conInfo)
+						con.connect(function(err) {
+							if(err)
+								writeResult(res, {'error' : err});
+
+							else{
+
+								con.query("SELECT *  FROM SNIPPET WHERE SNIP_ID = ?", [req.query.id], function(err, result, fields){
+									if(err)
+										writeResult(res, {'error': err});
+									else{
+										console.log(result[0].SNIP_CREATOR + " " + req.session.user.email);
+										console.log(req.query.id);
+										if(result[0].SNIP_CREATOR != req.session.user.email)
+											writeResult(res, {'updateError' : 'You do not own this snippet'});
+										else{
+											
+											con.query("UPDATE SNIPPET SET SNIP_LANG = ?, SNIP_DESC = ?, SNIP_SNIPPET = ? WHERE SNIP_ID = ?", [req.query.lang, req.query.desc, req.query.snippet, req.query.id], function(err, result, fields){
+												if(err)
+													writeResult(res, {'error': err});
+												else{
+													writeResult(res, {'updateError': "", 'error' : ""});
+												}
+											});
+										
+										}
+
+									}
+
+								});
+							}
+
+						});
+					}		
 				}
+				
 			}
-		}	
+		}
 	}
+
 }
 
 //using only for test.py to remove test user from database
