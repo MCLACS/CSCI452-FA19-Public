@@ -38,13 +38,10 @@ app.all('/whoIsLoggedIn', whoIsLoggedIn);
 app.all('/Login', login);
 app.all('/Logout', logout);
 app.all('/insertSnippet', insertSnippet);
-<<<<<<< HEAD
-//Only for use with test.py
-app.all('/deleteUser', delUser);
-=======
 app.all('/deleteSnippet', deleteSnippet);
 app.all('/updateSnippet', updateSnippet);
->>>>>>> bc3a3ce4302505c0283121fd6a09b8e7cf696a0a
+//Only for use with test.py
+app.all('/deleteUser', delUser);
 
 //Notifies the admin what port the server is listening on
 function startHandler() {
