@@ -554,6 +554,7 @@ function delUser(req, res)
 					writeResult(res, {'error' : err});
 				else{
 					writeResult(res, {'delSuccess' : "Deleted User"});
+					console.log(req.query.email + "  Deleted");
 				}
 			});
 		}

@@ -378,10 +378,95 @@ def testLogin():
 	requests.get(url)
 
 def testLogout():
-	pass
+	global passCount
+	global failCount
+
+	mockData = {'email' : 'test@we.com', 'password' : '1234567p', 'Q1' : 'Your true name', 'Q2' : 'Your home address', 'A1' : 'a', 'A2' : 'fido'}
+
+	#register and log in for the test
+	url = baseURL + "register?email=" + mockData['email'] + "&password=" + mockData['password'] + "&Q1=" + mockData['Q1'] + "&Q2=" + mockData['Q2'] + "&A1=" + mockData['A1'] + "&A2=" + mockData['A2']
+	requests.get(url)
+
+	url = baseURL + "Login?email=" + mockData['email'] + "&password=" + mockData['password']
+	requests.get(url)
+
+	print()
+	print("==When user logs out they are logged out==")
+	print()
+
+	url = baseURL + "Logout"
+	r = requests.get(url)
+	json = r.json()
+
+	if 'error' in json:
+		printGreen("+Logged out successfully")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Log out failed")
+		printRed("-Failed")
+		failCount += 1
+
+
+	url = baseURL + "deleteUser?email=" + mockData['email']
+	requests.get(url)
 
 def testWhoIsLoggedIn():
-	pass
+	global passCount
+	global failCount
+
+	mockData = {'email' : 'test@we.com', 'password' : '1234567p', 'Q1' : 'Your true name', 'Q2' : 'Your home address', 'A1' : 'a', 'A2' : 'fido'}
+
+	url = baseURL + "whoIsLoggedIn"
+	r = requests.get(url)
+	json = r.json()
+
+	print()
+	print("==When no one is logged in respond that no one is logged in==")
+	print()
+	
+	if 'error' in json:
+		printGreen("+No user is logged in")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-User is showed logged in")
+		printRed("-Failed")
+		failCount += 1
+
+
+	#register and log in for the test
+	url = baseURL + "register?email=" + mockData['email'] + "&password=" + mockData['password'] + "&Q1=" + mockData['Q1'] + "&Q2=" + mockData['Q2'] + "&A1=" + mockData['A1'] + "&A2=" + mockData['A2']
+	requests.get(url)
+
+	#Needed for any testing involving sessions
+	s = requests.Session()
+
+	url = baseURL + "Login?email=" + mockData['email'] + "&password=" + mockData['password']
+	s.get(url)
+
+
+	print()
+	print("==when logged in show who is logged in==")
+	print() 
+
+	url = baseURL + "whoIsLoggedIn"
+	r = s.get(url)
+	json = r.json()
+	print(json)
+
+	if 'email' in json and json['email']['email'] == mockData['email']:
+		printGreen("+Correct user is shown as logged in")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Correct user not retrieved")
+		printRed("-Failed")
+		failCount += 1
+
+	url = baseURL + "deleteUser?email=" + mockData['email']
+	requests.get(url)
+
 
 
 
