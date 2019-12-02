@@ -705,7 +705,7 @@
                 let lang = encodeURIComponent($('#langInsert').val().trim());
                 let desc = encodeURIComponent($('#descInsert').val().trim());
                 let snippet = encodeURIComponent($('#codeInsert').val().trim());
-                sendRequest("insertSnippet?lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                sendRequest("insertSnippet?lang=" + lang + "&desc=" + desc + "&snippet=" + snippet, function () {
                     if (model.insertError == undefined || model.insertError == "") {
                         sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                         $('#insertSnippetDlg').modal('hide');
@@ -748,7 +748,7 @@
                 console.log(lang);
                 let desc = encodeURIComponent($('#descEdit').val().trim());
                 let snippet = encodeURIComponent($('#codeEdit').val().trim());
-                sendRequest("updateSnippet?id=" + id + "&lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                sendRequest("updateSnippet?id=" + id + "&lang=" + lang + "&desc=" + desc + "&snippet=" + snippet, function () {
                     if (model.updateError == undefined || model.updateError == "") {
                         $('#editSnippetDlg').modal('hide');
                         sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);  
