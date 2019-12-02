@@ -42,13 +42,25 @@ def runTests():
 	#make sure getSnippets retrieves snippets
 	testGetSnippets()
 
+	#Make sure registrations and questions are retrieved
+	testGetQuestions()
 	testRegistration()
 
-	testGetQuestions()
+	#Make sure login/out functions work
 	testLogin()
 	testLogout()
 	testWhoIsLoggedIn()
 
+	#Change Password functions
+	testGetUserQuestions()
+	testChangePassword()
+
+	
+	#Snippet Manipulation testing
+	testGetLanguages()
+	testInsertSnippet()
+	testUpdateSnippet()
+	testDeleteSnippet()
 	
 
 
@@ -469,10 +481,516 @@ def testWhoIsLoggedIn():
 
 
 
+def testGetUserQuestions():
+	global passCount
+	global failCount
+
+	mockData = {'email' : 'test@we.com', 'password' : '1234567p', 'Q1' : 'Your true name', 'Q2' : 'Your home address', 'A1' : 'a', 'A2' : 'fido'}
+	
+	url = baseURL + "register?email=" + mockData['email'] + "&password=" + mockData['password'] + "&Q1=" + mockData['Q1'] + "&Q2=" + mockData['Q2'] + "&A1=" + mockData['A1'] + "&A2=" + mockData['A2']
+	requests.get(url)
+
+	url = baseURL + "Logout"
+	requests.get(url)
+
+	print()
+	print("==When email is empty do not retrieve questions==")
+	print()
+
+	url = baseURL + "getUserQuestions?email=" + ""
+	r = requests.get(url)
+	json = r.json()
+
+	if 'changePassError' in json and not 'userQuestions' in json:
+		printGreen("+No questions retrieved")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Questions were retrieved")
+		printRed("-Questions were not retrieved")
+		failCount += 1
+
+	print()
+	print("==When email does not exist, do not pull questions==")
+	print()
+
+	url = baseURL + "getUserQuestions?email=bob@c.p"
+	r = requests.get(url)
+	json = r.json()
+
+	if 'changePassError' in json and not 'userQuestions' in json:
+		printGreen("+No questions retrieved")
+		printGreen("+Passed")
+		passCount += 1
+
+	else:
+		printRed('-Questions were retrieved')
+		printRed('-Failed')
+		failCount += 1
+
+	print()
+	print("==When email is good, pull questions==")
+	print()
+
+	url = baseURL + "getUserQuestions?email=" + mockData['email']
+	r = requests.get(url)
+	json = r.json()
+
+	if json['changePassError'] == "" and 'userQuestions' in json:
+		printGreen("+Questions were retrieved")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Questions not retrieved")
+		printRed("-Failed")
+		failCount += 1
+	
+
+	url = baseURL + "deleteUser?email=" + mockData['email']
+	requests.get(url)
+
+def testChangePassword():
+	global passCount
+	global failCount
+
+	mockData = {'email' : 'test@we.com', 'password' : '1234567p', 'Q1' : 'Your true name', 'Q2' : 'Your home address', 'A1' : 'a', 'A2' : 'fido'}
+
+	url = baseURL + "register?email=" + mockData['email'] + "&password=" + mockData['password'] + "&Q1=" + mockData['Q1'] + "&Q2=" + mockData['Q2'] + "&A1=" + mockData['A1'] + "&A2=" + mockData['A2']
+	requests.get(url)
+
+	url = baseURL + "Logout"
+	requests.get(url)
+	
+	print()
+	print("==When Answers are blank, fail to change password==")
+	print()
+
+	url = baseURL + "changePass?email=" + mockData['email'] + "&password=12345aaa&Answer1=&Answer2="
+	r = requests.get(url)
+	json = r.json()
+
+	if not json['changePassError'] == "":
+		printGreen("+Password did not change")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Password was changed")
+		printRed("-Failed")
+		failCount += 1
+
+
+	print()
+	print("==When Answers are incorrect, fail to change password==")
+	print()
+
+	url = baseURL + "changePass?email=" + mockData['email'] + "&password=12345aaa&Answer1=pop&Answer2=corn"
+	r = requests.get(url)
+	json = r.json()
+
+	if not json['changePassError'] == "":
+		printGreen("+Password did not change")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Password was changed")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("==when invalid password, return error==")
+	print()
+
+	url = baseURL + "changePass?email=" + mockData['email'] + "&password=123&Answer1=" + mockData['A1'] + "&Answer2=" + mockData['A2']
+	r = requests.get(url)
+	json = r.json()
+
+	if not json['changePassError'] == "":
+		printGreen("+Password is unchanged")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Password was changed")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("==When password is good, change password==")
+	print()
+
+	url = baseURL + "changePass?email=" + mockData['email'] + "&password=12345aaa&Answer1=" + mockData['A1'] + "&Answer2=" + mockData['A2']
+	r = requests.get(url)
+	json = r.json()
+
+	if json['changePassError'] == "" and json['loginError'] == "":
+		printGreen("+Password Change Successful")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Password failed to change")
+		printRed("-Failed")
+		failCount += 1
+
+
+	url = baseURL + "deleteUser?email=" + mockData['email']
+	requests.get(url)
+
+def testGetLanguages():
+	global passCount
+	global failCount
+	
+	print()
+	print("==When get languages called, return languages==")	
+	print()	
+
+	url = baseURL + "getLanguages"
+	r = requests.get(url)
+	json = r.json()
+
+	
+	if 'languages' in json:
+		printGreen("+Languages Retrieved")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Languages Not Retrieved")
+		printRed("-Failed")
+		failCount += 1
+
+def testInsertSnippet():
+	global passCount
+	global failCount
+
+	mockData = {'email' : 'test@we.com', 'password' : '1234567p', 'Q1' : 'Your true name', 'Q2' : 'Your home address', 'A1' : 'a', 'A2' : 'fido', 'desc' : 'Hello World', 'lang' : 'java', 'snippet' : 'System.out.print("Hello World");'}
+	
+	print()
+	print("==When user is not logged in, fail to insert Snippet==")
+	print()
+	
+	url = baseURL + "insertSnippet?desc=" + mockData['desc'] + "&lang=" + mockData['lang'] + "&snippet=" + mockData['snippet']
+	r = requests.get(url)
+	json = r.json()
+
+	if not json['insertError'] == "":
+		printGreen("+Snippet not inserted")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Snippet Inserted")
+		printRed("-Failed")
+		failCount += 1
+
+	#Login test user for testing
+	s = requests.Session()
+
+	url = baseURL + "register?email=" + mockData['email'] + "&password=" + mockData['password'] + "&Q1=" + mockData['Q1'] + "&Q2=" + mockData['Q2'] + "&A1=" + mockData['A1'] + "&A2=" + mockData['A2']
+	s.get(url)
+	
+	print()
+	print("==When description is invalid, return error==")
+	print()
+
+	url = baseURL + "insertSnippet?desc=&lang=" + mockData['lang'] + "&snippet=" + mockData['snippet']
+	r = s.get(url)
+	json = r.json()
+
+	if not json['insertError'] == "":
+		printGreen("+Snippet not inserted")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Snippet was inserted")
+		printRed("-Failed")
+		failCount += 1
+	
+	print()
+	print("==When lang is invalid, return Error==")
+	print()
+
+	url = baseURL + "insertSnippet?desc=" + mockData['desc'] + "&lang=&snippet=" + mockData['snippet']
+	r = s.get(url)
+	json = r.json()
+
+	if not json['insertError'] == "":
+		printGreen("+Snippet not Inserted")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Snippet was inserted")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("==When snippet is invalid, return Error==")
+	print()
+
+	url = baseURL + "insertSnippet?desc=" + mockData['desc'] + "&lang=" + mockData['lang'] + "&snippet="
+	r = s.get(url)
+	json = r.json()
+
+	if not json['insertError'] == "":
+		printGreen("+Snippet not inserted")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Snippet Inserted")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("==When all valid and logged in, Insert Snippet==")
+	print()
+
+	url = baseURL + "insertSnippet?desc=" + mockData['desc'] + "&lang=" + mockData['lang'] + "&snippet=" + mockData['snippet']
+	r = s.get(url)
+	json = r.json()
+
+	if json['insertError'] == "" and json['error'] == "":
+		printGreen("+Snippet inserted successfully")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Snippet failed to insert")
+		printRed("-Failed")
+		failCount += 1
+
+	url = baseURL + "deleteTestSnippets"
+	requests.get(url)
+	
+	url = baseURL + "deleteUser?email=" + mockData['email']
+	requests.get(url)
+
+def testUpdateSnippet():
+	global passCount
+	global failCount
+
+	mockData = {'email' : 'test@we.com', 'password' : '1234567p', 'Q1' : 'Your true name', 'Q2' : 'Your home address', 'A1' : 'a', 'A2' : 'fido', 'desc' : 'Hello World', 'lang' : 'java', 'snippet' : 'System.out.print("Hello World");'}
+
+	#register, add snippet and retrieve that snippets ID for testing
+	s = requests.Session()
+	url = baseURL + "register?email=" + mockData['email'] + "&password=" + mockData['password'] + "&Q1=" + mockData['Q1'] + "&Q2=" + mockData['Q2'] + "&A1=" + mockData['A1'] + "&A2=" + mockData['A2']
+	s.get(url)
+
+	url = baseURL + "insertSnippet?desc=" + mockData['desc'] + "&lang=" + mockData['lang'] + "&snippet=" + mockData['snippet']
+	s.get(url)
+
+	url = baseURL + "getSnippets?category=SNIP_LANG&order=ASC&filter=" + mockData['email']
+	r = s.get(url)
+	json = r.json()
+	snip_id = json['result'][0]['SNIP_ID']
+
+	url = baseURL + "Logout"
+	s.get(url)
+
+	print()
+	print("==When not logged in, can not update snippet==")
+	print()
+
+	url = baseURL + "updateSnippet?id=" + str(snip_id) + "&lang=SQL&desc=DataBasic&snippet=cout<<DEATH;"
+	r = s.get(url)
+	json = r.json()
+	
+	if not json['updateError'] == "":
+		printGreen("+Could not update")
+		printGreen("+Passed")
+		passCount += 1
+
+	else:
+		printRed("-Could Update")
+		printRed("-Failed")
+		failCount += 1
+
+
+	
+	#Login test user for testing
+	url = baseURL + "Login?email=" + mockData['email'] + "&password=" + mockData['password']
+	s.get(url)
+	
+	print()
+	print("==when snippet not specified, can not update snippet==")
+	print()
+
+	url = baseURL + "updateSnippet?id=&lang=SQL&desc=DataBasic&snippet=cout<<DEATH;"
+	r = s.get(url)
+	json = r.json()
+
+	if not json['updateError'] == "":
+		printGreen("+Could not update")
+		printGreen("+Passed")
+		passCount += 1
+
+	else:
+		printRed("-Could Update")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("==When description invalid, can not update snippet==")
+	print()
+
+	url = baseURL + "updateSnippet?id=" + str(snip_id) + "&lang=SQL&desc=&snippet=cout<<DEATH;"
+	r = s.get(url)
+	json = r.json()
+
+	if not json['updateError'] == "":
+		printGreen("+Could not update")
+		printGreen("+Passed")
+		passCount += 1
+
+	else:
+		printRed("-Could Update")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("==When lang invalid, can not uodate snippet==")
+	print()
+
+	url = baseURL + "updateSnippet?id=" + str(snip_id) + "&lang=&desc=DataBasic&snippet=cout<<DEATH;"
+	r = s.get(url)
+	json = r.json()
+
+	if not json['updateError'] == "":
+		printGreen("+Could not update")
+		printGreen("+Passed")
+		passCount += 1
+
+	else:
+		printRed("-Could Update")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("== when snippet invalid, can not update snippet==")
+	print()
+
+	url = baseURL + "updateSnippet?id=" + str(snip_id) + "&lang=SQL&desc=DataBasic&snippet="
+	r = s.get(url)
+	json = r.json()
+
+	if not json['updateError'] == "":
+		printGreen("+Could not update")
+		printGreen("+Passed")
+		passCount += 1
+
+	else:
+		printRed("-Could Update")
+		printRed("-Failed")
+		failCount += 1
+
+	print()
+	print("==When logged in, snippet specified and all fields correct, update snippet")
+	print()
+
+	url = baseURL + "updateSnippet?id=" + str(snip_id) + "&lang=SQL&desc=DataBasic&snippet=cout<<DEATH;"
+	r = s.get(url)
+	json = r.json()
+
+	if json['updateError'] == "" and json['error'] == "":
+		printGreen("+Updated Snippet Successfully")
+		printGreen("+Passed")
+		passCount += 1
+
+	else:
+		printRed("-Failed to update Snippet")
+		printRed("-Failed")
+		failCount += 1
+
+
+	url = baseURL + "deleteTestSnippets"
+	requests.get(url)
+
+	url = baseURL + "deleteUser?email=" + mockData['email']
+	requests.get(url)
+
+
+def testDeleteSnippet():
+	global passCount
+	global failCount
+
+	mockData = {'email' : 'test@we.com', 'password' : '1234567p', 'Q1' : 'Your true name', 'Q2' : 'Your home address', 'A1' : 'a', 'A2' : 'fido', 'desc' : 'Hello World', 'lang' : 'java', 'snippet' : 'System.out.print("Hello World");'}
+
+	#register, add snippet and retrieve that snippets ID for testing
+	s = requests.Session()
+	url = baseURL + "register?email=" + mockData['email'] + "&password=" + mockData['password'] + "&Q1=" + mockData['Q1'] + "&Q2=" + mockData['Q2'] + "&A1=" + mockData['A1'] + "&A2=" + mockData['A2']
+	s.get(url)
+
+	url = baseURL + "insertSnippet?desc=" + mockData['desc'] + "&lang=" + mockData['lang'] + "&snippet=" + mockData['snippet']
+	s.get(url)
+	
+	url = baseURL + "getSnippets?category=SNIP_LANG&order=ASC&filter=" + mockData['email']
+	r = s.get(url)
+	json = r.json()
+	snip_id = json['result'][0]['SNIP_ID']
+	
+	url = baseURL + "Logout"
+	s.get(url)
+
+	print()
+	print("==When not logged in do not allow deleting a snippet==")
+	print()
+
+	url = baseURL + "deleteSnippet?id=" + str(snip_id)
+	r = s.get(url)
+	json = r.json()
+
+	if not json['deleteError'] == "":
+		printGreen("+Could not delete snippet")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Deleted a snippet")
+		printRed("-Failed")
+		failCount += 1
+
+	#Login test user for testing
+
+	url = baseURL + "Login?email=" + mockData['email'] + "&password=" + mockData['password']
+	s.get(url)
+
+
+	print()
+	print("==When no snippet specified, do not delete snippet==")
+	print()
+
+	url = baseURL + "deleteSnippet?id="
+	r = s.get(url)
+	json = r.json()
+
+	if not json['deleteError'] == "":
+		printGreen("+Could not delete snippet")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Deleted a snippet")
+		printRed("Failed")
+		failCount += 1
+
+	print()
+	print("==When logged in and snippet specified, delete snippet that is your own==")
+	print()
+
+	url = baseURL + "deleteSnippet?id=" + str(snip_id)
+	r = s.get(url)
+	json = r.json()
+
+	if json['deleteError'] == "" and json['error'] == "":
+		printGreen("+Deleted Snippet Successfully")
+		printGreen("+Passed")
+		passCount += 1
+	else:
+		printRed("-Snippet not deleted")
+		printRed("-Failed")
+		failCount += 1
+
+	url = baseURL + "deleteTestSnippets"
+	requests.get(url)
+
+	url = baseURL + "deleteUser?email=" + mockData['email']
+	requests.get(url)
 
 runTests()
 print()
+print("Total: " + str(passCount + failCount))
 printGreen("Passed: " + str(passCount))
 printRed("Failed: " + str(failCount))
-print("Total: " + str(passCount + failCount))
 
