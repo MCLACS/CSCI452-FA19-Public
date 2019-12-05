@@ -11,6 +11,10 @@
             height: 38px;
         }
 
+        .modal-footer, .modal-header{
+            background-color: #070524
+        }
+
         .snipRow {
             cursor: pointer;
         }
@@ -32,26 +36,27 @@
 </head>
 <!-- https://www.w3schools.com/icons/icons_reference.asp -->
 
-<body>
-    <div class="container">
+<body class="p-3 mb-2 bg-dark text-white">
+    <div class="container p-3 mb-2 bg-dark text-white">
         <!--put your html code here...-->
         <!--<h4>Gitter(tm)(c).gov.org.io</h4>-->
 
-        <nav class="navbar navbar-light bg-white">
+        <nav class=" navbar navbar-dark fixed-top " style="background-color: #070524">
             <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#" id='snippetBtn'>Add Code Snippet</a>
-                    <a href="#" id='loginBtn'>Login/Register</a>
+                    <button type="button" class="btn btn-outline-light" href="#" id='snippetBtn'>Add Code
+                        Snippet</button>
+                    <button type="button" class="btn btn-outline-light" href="#" id='loginBtn'>Login/Register</button>
                     <span id="currUser"></span>
-                    <a href="#" id='logoutBtn'>Logout</a>
+                    <button type="button" class="btn btn-outline-light" href="#" id='logoutBtn'>Logout</button>
                 </li>
 
 
             </ul>
         </nav>
 
-
+        <br><br>
         <form class="form-inline search-bar float-right">
             <input class="form-control" type="text" placeholder="Filter" aria-label="" id='filterTxt'>
             <button id='btnSubmit' type="button" class="btn btn-default float-left"><span class="fa fa-search"
@@ -60,7 +65,7 @@
 
         <br>
 
-        <table class="table">
+        <table class="table table-dark">
             <thead>
                 <tr>
                     <th scope="col">
@@ -105,13 +110,13 @@
     <div id='snippetDlg' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-light">
+                <div class="modal-header text-light">
                     <h5 id='snippetTitle' class="modal-title">Snippet</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <pre><code id='snippetText'></code></pre>
                     <br>
                     <button id='editSnippetBtn' type="button" class="btn btn-primary">Edit</button>
@@ -128,13 +133,13 @@
     <div id='registerDlg' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-light">
+                <div class="modal-header text-light">
                     <h5 class="modal-title">Register</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>New Account</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
@@ -171,13 +176,13 @@
     <div id='loginDlg' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-light">
+                <div class="modal-header text-light">
                     <h5 class="modal-title">Login/Register</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Login</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
@@ -190,9 +195,9 @@
                         </div>
                     </form>
                     <pre id="loginError"></pre>
-                    <a href='#' id='changePassBtn'>Forgot your password? Click here you dumb idiot!</a>
-                    <br />
-                    <a href='#' id='registerBtn'>Do not have an account? Register </a>
+                    <button type="button" class="btn btn-outline-light" href='#' id='changePassBtn'>Forgot your password?</button>
+                    <br>
+                    <button type="button" class="btn btn-outline-light" href='#' id='registerBtn'>Do not have an account? Register</button>
                 </div>
 
 
@@ -208,13 +213,13 @@
     <div id='changePassDlg' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-light">
+                <div class="modal-header text-light">
                     <h5 class="modal-title">Change Password</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Login</h4>
                     <form class="border border-primary p-3">
                         <label for="Answer1" id="Question1"></label>
@@ -243,13 +248,13 @@
     <div id='insertSnippetDlg' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-light">
+                <div class="modal-header text-light">
                     <h5 class="modal-title">Snippet</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Add A Snippet</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
@@ -280,13 +285,13 @@
     <div id='editSnippetDlg' class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-light">
+                <div class="modal-header text-light">
                     <h5 class="modal-title">Update Snippet</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Update This Snippet</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
@@ -337,10 +342,15 @@
                 model.creatorOrder = "DESC";
                 model.descOrder = "DESC";
 
-
-                sendRequest("getQuestions");
-                sendRequest("whoIsLoggedIn");
-                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                sendRequest("getQuestions", function () {
+                    if (model.error == undefined || model.error == "") {
+                        sendRequest("whoIsLoggedIn", function () {
+                            if (model.error == undefined || model.error == "") {
+                                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                            }
+                        });
+                    }
+                });
             }
 
             // view...
@@ -425,19 +435,17 @@
                         q1List.text(model.questions[i].QUEST_TEXT);
                         q2List.attr("value", model.questions[i].QUEST_ID);
                         q2List.text(model.questions[i].QUEST_TEXT);
-                        
+
                         //Initilized Case
-                        if(i == 0)
-                        {
+                        if (i == 0) {
                             q1List.attr("selected", true);
                             q2List.attr("disabled", true);
                         }
-                        if(i == 1)
-                        {
+                        if (i == 1) {
                             q1List.attr("disabled", true);
                             q2List.attr("selected", true);
                         }
-                        
+
                         $("#Q1").append(q1List);
                         $("#Q2").append(q2List);
                     }
@@ -639,29 +647,29 @@
                     }
                 });
             });
-            
+
             //Disables the option selected in Q1 in Q2
-            $('#Q1').change(function() {
+            $('#Q1').change(function () {
                 console.log("Q1 Triggered");
                 let selected = $('#Q1').val();
-                $("#Q2 > option").each(function() {
-                    if(selected == this.value)
+                $("#Q2 > option").each(function () {
+                    if (selected == this.value)
                         this.disabled = true;
-                    else this.disabled =false;
+                    else this.disabled = false;
                 });
             });
-            
+
             //Disables the option selected in Q2 in Q1
-            $('#Q2').change(function() {
+            $('#Q2').change(function () {
                 console.log("Q2 Triggered");
                 let selected = $('#Q2').val();
-                $("#Q1 > option").each(function() {
-                    if(selected == this.value)
+                $("#Q1 > option").each(function () {
+                    if (selected == this.value)
                         this.disabled = true;
-                    else this.disabled =false;
+                    else this.disabled = false;
                 });
             });
-            
+
             $('#confirmRegisterBtn').click(function () {
                 $('#regError').empty();
                 let email = $('#regEmail').val().trim();
@@ -705,7 +713,7 @@
                 let lang = encodeURIComponent($('#langInsert').val().trim());
                 let desc = encodeURIComponent($('#descInsert').val().trim());
                 let snippet = encodeURIComponent($('#codeInsert').val().trim());
-                sendRequest("insertSnippet?lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                sendRequest("insertSnippet?lang=" + lang + "&desc=" + desc + "&snippet=" + snippet, function () {
                     if (model.insertError == undefined || model.insertError == "") {
                         sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                         $('#insertSnippetDlg').modal('hide');
@@ -748,10 +756,10 @@
                 console.log(lang);
                 let desc = encodeURIComponent($('#descEdit').val().trim());
                 let snippet = encodeURIComponent($('#codeEdit').val().trim());
-                sendRequest("updateSnippet?id=" + id + "&lang=" + lang + "&desc=" + desc + "&snippet=" + snippet + "&email=" + model.user.email, function () {
+                sendRequest("updateSnippet?id=" + id + "&lang=" + lang + "&desc=" + desc + "&snippet=" + snippet, function () {
                     if (model.updateError == undefined || model.updateError == "") {
                         $('#editSnippetDlg').modal('hide');
-                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);  
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                     }
                     else
                         $("#updateError").text(model.updateError);
