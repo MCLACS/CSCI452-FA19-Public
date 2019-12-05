@@ -33,22 +33,22 @@
 <!-- https://www.w3schools.com/icons/icons_reference.asp -->
 
 <body>
-    <div class="container">
+    <div class="container p-3 mb-2 bg-dark text-white"">
         <!--put your html code here...-->
         <!--<h4>Gitter(tm)(c).gov.org.io</h4>-->
 
-        <nav class="navbar navbar-light bg-white">
-            <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#" id='snippetBtn'>Add Code Snippet</a>
-                    <a href="#" id='loginBtn'>Login/Register</a>
-                    <span id="currUser"></span>
-                    <a href="#" id='logoutBtn'>Logout</a>
-                </li>
+        <nav class=" navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="#" id='snippetBtn'>Add Code Snippet</a>
+                <a href="#" id='loginBtn'>Login/Register</a>
+                <span id="currUser"></span>
+                <a href="#" id='logoutBtn'>Logout</a>
+            </li>
 
 
-            </ul>
+        </ul>
         </nav>
 
 
@@ -60,7 +60,7 @@
 
         <br>
 
-        <table class="table">
+        <table class="table table-dark">
             <thead>
                 <tr>
                     <th scope="col">
@@ -337,10 +337,15 @@
                 model.creatorOrder = "DESC";
                 model.descOrder = "DESC";
 
-
-                sendRequest("getQuestions");
-                sendRequest("whoIsLoggedIn");
-                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                sendRequest("getQuestions", function () {
+                    if (model.error == undefined || model.error == "") {
+                        sendRequest("whoIsLoggedIn", function () {
+                            if (model.error == undefined || model.error == "") {
+                                sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
+                            }
+                        });
+                    }
+                });
             }
 
             // view...
@@ -425,19 +430,17 @@
                         q1List.text(model.questions[i].QUEST_TEXT);
                         q2List.attr("value", model.questions[i].QUEST_ID);
                         q2List.text(model.questions[i].QUEST_TEXT);
-                        
+
                         //Initilized Case
-                        if(i == 0)
-                        {
+                        if (i == 0) {
                             q1List.attr("selected", true);
                             q2List.attr("disabled", true);
                         }
-                        if(i == 1)
-                        {
+                        if (i == 1) {
                             q1List.attr("disabled", true);
                             q2List.attr("selected", true);
                         }
-                        
+
                         $("#Q1").append(q1List);
                         $("#Q2").append(q2List);
                     }
@@ -639,29 +642,29 @@
                     }
                 });
             });
-            
+
             //Disables the option selected in Q1 in Q2
-            $('#Q1').change(function() {
+            $('#Q1').change(function () {
                 console.log("Q1 Triggered");
                 let selected = $('#Q1').val();
-                $("#Q2 > option").each(function() {
-                    if(selected == this.value)
+                $("#Q2 > option").each(function () {
+                    if (selected == this.value)
                         this.disabled = true;
-                    else this.disabled =false;
+                    else this.disabled = false;
                 });
             });
-            
+
             //Disables the option selected in Q2 in Q1
-            $('#Q2').change(function() {
+            $('#Q2').change(function () {
                 console.log("Q2 Triggered");
                 let selected = $('#Q2').val();
-                $("#Q1 > option").each(function() {
-                    if(selected == this.value)
+                $("#Q1 > option").each(function () {
+                    if (selected == this.value)
                         this.disabled = true;
-                    else this.disabled =false;
+                    else this.disabled = false;
                 });
             });
-            
+
             $('#confirmRegisterBtn').click(function () {
                 $('#regError').empty();
                 let email = $('#regEmail').val().trim();
@@ -751,7 +754,7 @@
                 sendRequest("updateSnippet?id=" + id + "&lang=" + lang + "&desc=" + desc + "&snippet=" + snippet, function () {
                     if (model.updateError == undefined || model.updateError == "") {
                         $('#editSnippetDlg').modal('hide');
-                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);  
+                        sendRequest("getSnippets?filter=" + model.filter + "&category=" + model.category + "&order=" + model.order);
                     }
                     else
                         $("#updateError").text(model.updateError);
