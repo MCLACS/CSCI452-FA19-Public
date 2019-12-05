@@ -32,23 +32,24 @@
 </head>
 <!-- https://www.w3schools.com/icons/icons_reference.asp -->
 
-<body>
-    <div class="container p-3 mb-2 bg-dark text-white"">
+<body class="p-3 mb-2 bg-dark text-white">
+    <div class="container p-3 mb-2 bg-dark text-white">
         <!--put your html code here...-->
         <!--<h4>Gitter(tm)(c).gov.org.io</h4>-->
 
-        <nav class=" navbar navbar-dark bg-dark">
-        <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a href="#" id='snippetBtn'>Add Code Snippet</a>
-                <a href="#" id='loginBtn'>Login/Register</a>
-                <span id="currUser"></span>
-                <a href="#" id='logoutBtn'>Logout</a>
-            </li>
+        <nav class=" navbar navbar-dark" style="background-color: #070524">
+            <span class="navbar-brand mb-0 h4">Gitter(tm)(c).gov.org.io</span>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <button type="button" class="btn btn-outline-light" href="#" id='snippetBtn'>Add Code
+                        Snippet</button>
+                    <button type="button" class="btn btn-outline-light" href="#" id='loginBtn'>Login/Register</button>
+                    <span id="currUser"></span>
+                    <button type="button" class="btn btn-outline-light" href="#" id='logoutBtn'>Logout</button>
+                </li>
 
 
-        </ul>
+            </ul>
         </nav>
 
 
@@ -111,7 +112,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <pre><code id='snippetText'></code></pre>
                     <br>
                     <button id='editSnippetBtn' type="button" class="btn btn-primary">Edit</button>
@@ -134,7 +135,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>New Account</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
@@ -177,7 +178,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Login</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
@@ -190,9 +191,9 @@
                         </div>
                     </form>
                     <pre id="loginError"></pre>
-                    <a href='#' id='changePassBtn'>Forgot your password? Click here you dumb idiot!</a>
-                    <br />
-                    <a href='#' id='registerBtn'>Do not have an account? Register </a>
+                    <button type="button" class="btn btn-outline-light" href='#' id='changePassBtn'>Forgot your password?</button>
+                    <br>
+                    <button type="button" class="btn btn-outline-light" href='#' id='registerBtn'>Do not have an account? Register</button>
                 </div>
 
 
@@ -214,7 +215,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Login</h4>
                     <form class="border border-primary p-3">
                         <label for="Answer1" id="Question1"></label>
@@ -249,7 +250,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Add A Snippet</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
@@ -286,7 +287,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-dark text-white">
                     <h4>Update This Snippet</h4>
                     <form class="border border-primary p-3">
                         <div class="form-group">
